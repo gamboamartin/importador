@@ -8,7 +8,6 @@
  */
 namespace gamboamartin\importador\controllers;
 
-use base\controller\init;
 
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\imp_database_html;

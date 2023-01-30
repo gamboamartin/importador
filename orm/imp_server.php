@@ -17,7 +17,8 @@ class imp_server extends _modelo_parent{
         $campos_obligatorios[] = 'domain';
 
 
-        $columnas_extra = array();
+        $columnas_extra['imp_server_n_databases'] = /** @lang sql */
+            "(SELECT COUNT(*) FROM imp_database WHERE imp_database.imp_server_id = imp_server.id)";
         $tipo_campos = array();
 
 
