@@ -10,6 +10,11 @@ class imp_server extends _modelo_parent{
         $columnas = array($tabla=>false);
         $campos_obligatorios[] = 'descripcion';
         $campos_obligatorios[] = 'descripcion_select';
+        $campos_obligatorios[] = 'ip';
+        $campos_obligatorios[] = 'proveedor';
+        $campos_obligatorios[] = 'user';
+        $campos_obligatorios[] = 'password';
+        $campos_obligatorios[] = 'domain';
 
 
         $columnas_extra = array();

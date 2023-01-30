@@ -67,8 +67,12 @@ class controlador_imp_server extends _ctl_parent_sin_codigo {
 
     }
 
-
-    protected function campos_view(array $inputs = array()): array
+    /**
+     * Integra los campos para vistas generales
+     * @param array $inputs Inputs precargados
+     * @return array
+     */
+    final protected function campos_view(array $inputs = array()): array
     {
         $keys = new stdClass();
         $keys->inputs = array('codigo','descripcion','ip','proveedor','user','password','domain');
