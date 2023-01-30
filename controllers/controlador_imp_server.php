@@ -11,6 +11,7 @@ namespace gamboamartin\importador\controllers;
 use base\controller\init;
 
 use gamboamartin\errores\errores;
+use gamboamartin\importador\html\imp_database_html;
 use gamboamartin\importador\html\imp_server_html;
 use gamboamartin\importador\models\imp_server;
 use gamboamartin\system\_ctl_parent_sin_codigo;
@@ -24,6 +25,8 @@ class controlador_imp_server extends _ctl_parent_sin_codigo {
 
     public stdClass|array $imp_sever = array();
     private imp_server_html $html_local;
+
+    public string $link_imp_database_alta_bd = '';
 
 
     public function __construct(PDO $link, html $html = new html(), stdClass $paths_conf = new stdClass()){
@@ -66,6 +69,14 @@ class controlador_imp_server extends _ctl_parent_sin_codigo {
             $this->imp_sever = $imp_sever;
         }
 
+        $link_imp_database_alta_bd = $this->obj_link->link_alta_bd(link: $link, seccion: 'imp_database');
+        if(errores::$error){
+            $error = $this->errores->error(mensaje: 'Error al obtener link',data:  $link_imp_database_alta_bd);
+            print_r($error);
+            exit;
+        }
+        $this->link_imp_database_alta_bd = $link_imp_database_alta_bd;
+
 
     }
 
@@ -107,6 +118,30 @@ class controlador_imp_server extends _ctl_parent_sin_codigo {
         return $campos_view;
     }
 
+    public function databases(bool $header = true, bool $ws = false): array|stdClass|string
+    {
+
+        $data_view = new stdClass();
+        $data_view->names = array('Id','Database', 'Server','IP','User','Password','Tipo','Acciones');
+        $data_view->keys_data = array('imp_database_id','imp_database_descripcion','imp_server_descripcion','imp_server_ip','imp_database_user',
+            'imp_database_password','imp_database_tipo');
+        $data_view->key_actions = 'acciones';
+        $data_view->namespace_model = 'gamboamartin\\importador\\models';
+        $data_view->name_model_children = 'imp_database';
+
+
+        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__, not_actions: $this->not_actions);
+        if(errores::$error){
+            return $this->retorno_error(
+                mensaje: 'Error al obtener tbody',data:  $contenido_table, header: $header,ws:  $ws);
+        }
+
+
+        return $contenido_table;
+
+    }
+
+
 
 
     protected function key_selects_txt(array $keys_selects): array
@@ -143,6 +178,54 @@ class controlador_imp_server extends _ctl_parent_sin_codigo {
         }
 
         return $keys_selects;
+    }
+
+    protected function inputs_children(stdClass $registro): array|stdClass{
+        $select_imp_server_id = (new imp_server_html(html: $this->html_base))->select_imp_server_id(
+            cols:12,con_registros: true,id_selected:  $registro->imp_server_id,link:  $this->link, disabled: true);
+
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al obtener select_imp_server_id',data:  $select_imp_server_id);
+        }
+
+
+        $imp_database_descripcion = (new imp_database_html(html: $this->html_base))->input_descripcion(
+            cols:6,row_upd:  new stdClass(), value_vacio: true, place_holder: 'Database');
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al obtener imp_database_descripcion',
+                data:  $imp_database_descripcion);
+        }
+
+        $imp_database_user = (new imp_database_html(html: $this->html_base))->input_text_required(
+            cols: 6, disabled: false,name: 'user',place_holder: 'User',row_upd:   new stdClass(), value_vacio: false);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al obtener imp_database_user',
+                data:  $imp_database_user);
+        }
+
+        $imp_database_password = (new imp_database_html(html: $this->html_base))->input_text_required(
+            cols: 6, disabled: false,name: 'password',place_holder: 'Password',row_upd:   new stdClass(), value_vacio: false);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al obtener imp_database_password',
+                data:  $imp_database_user);
+        }
+
+        $imp_database_tipo = (new imp_database_html(html: $this->html_base))->input_text_required(
+            cols: 6, disabled: false,name: 'tipo',place_holder: 'Tipo',row_upd:   new stdClass(), value_vacio: false);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al obtener imp_database_tipo',
+                data:  $imp_database_user);
+        }
+
+
+        $this->inputs = new stdClass();
+        $this->inputs->imp_server_id = $select_imp_server_id;
+        $this->inputs->imp_database_user = $imp_database_user;
+        $this->inputs->imp_database_password = $imp_database_password;
+        $this->inputs->imp_database_tipo = $imp_database_tipo;
+        $this->inputs->imp_database_descripcion = $imp_database_descripcion;
+
+        return $this->inputs;
     }
 
 
