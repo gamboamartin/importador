@@ -33,7 +33,7 @@ class controlador_adm_session_Test extends test {
         $_SESSION['usuario_id'] = 2;
         $_GET['session_id'] = '1';
 
-        
+
 
         $controler = new controlador_adm_session(link: $this->link, paths_conf: $this->paths_conf);
         //$controler = new liberator($controler);

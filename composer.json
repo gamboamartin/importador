@@ -17,7 +17,7 @@
           "config\\": "config/",
           "gamboamartin\\importador\\tests\\": "tests",
           "links\\": "links/",
-          "html\\": "templates/directivas/"
+          "gamboamartin\\importador\\html\\": "templates/directivas/"
 
         }
     },
