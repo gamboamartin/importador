@@ -9,7 +9,7 @@ class imp_destino extends _modelo_parent{
 
     public function __construct(PDO $link){
         $tabla = 'imp_destino';
-        $columnas = array($tabla=>false,'imp_origen'=>$tabla,'imp_database'=>$tabla);
+        $columnas = array($tabla=>false,'imp_origen'=>$tabla,'imp_database'=>$tabla,'imp_server'=>'imp_database','adm_seccion'=>'imp_origen');
         $campos_obligatorios[] = 'descripcion';
         $campos_obligatorios[] = 'descripcion_select';
         $campos_obligatorios[] = 'imp_origen_id';

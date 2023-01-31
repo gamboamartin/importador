@@ -10,6 +10,7 @@ namespace gamboamartin\importador\controllers;
 
 
 use gamboamartin\errores\errores;
+use gamboamartin\importador\html\imp_database_html;
 use gamboamartin\importador\html\imp_origen_html;
 use gamboamartin\importador\models\imp_origen;
 use gamboamartin\system\_ctl_parent_sin_codigo;
@@ -23,6 +24,8 @@ class controlador_imp_origen extends _ctl_parent_sin_codigo {
 
     public stdClass|array $imp_origen = array();
     private imp_origen_html $html_local;
+
+    public string $link_imp_destino_alta_bd = '';
 
 
     public function __construct(PDO $link, html $html = new html(), stdClass $paths_conf = new stdClass()){
@@ -62,6 +65,14 @@ class controlador_imp_origen extends _ctl_parent_sin_codigo {
             }
             $this->imp_origen = $imp_origen;
         }
+
+        $link_imp_destino_alta_bd = $this->obj_link->link_alta_bd(link: $link, seccion: 'imp_destino');
+        if(errores::$error){
+            $error = $this->errores->error(mensaje: 'Error al obtener link',data:  $link_imp_destino_alta_bd);
+            print_r($error);
+            exit;
+        }
+        $this->link_imp_destino_alta_bd = $link_imp_destino_alta_bd;
 
 
     }
@@ -119,6 +130,52 @@ class controlador_imp_origen extends _ctl_parent_sin_codigo {
         }
 
         return $campos_view;
+    }
+
+    public function destinos(bool $header = true, bool $ws = false): array|stdClass|string
+    {
+
+        $data_view = new stdClass();
+        $data_view->names = array('Id','Destino', 'DB Destino','IP Destino','Seccion','Acciones');
+        $data_view->keys_data = array('imp_destino_id','imp_destino_descripcion','imp_database_descripcion','imp_server_ip',
+            'adm_seccion_descripcion');
+        $data_view->key_actions = 'acciones';
+        $data_view->namespace_model = 'gamboamartin\\importador\\models';
+        $data_view->name_model_children = 'imp_destino';
+
+
+        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__, not_actions: $this->not_actions);
+        if(errores::$error){
+            return $this->retorno_error(
+                mensaje: 'Error al obtener tbody',data:  $contenido_table, header: $header,ws:  $ws);
+        }
+
+
+        return $contenido_table;
+
+    }
+
+    protected function inputs_children(stdClass $registro): array|stdClass{
+        $select_imp_origen_id = (new imp_origen_html(html: $this->html_base))->select_imp_origen_id(
+            cols:12,con_registros: true,id_selected:  $registro->imp_database_id,link:  $this->link, disabled: true);
+
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al obtener select_imp_origen_id',data:  $select_imp_origen_id);
+        }
+
+        $select_imp_database_id = (new imp_database_html(html: $this->html_base))->select_imp_database_id(
+            cols:12,con_registros: true,id_selected:  -1,link:  $this->link, disabled: false);
+
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al obtener select_imp_database_id',data:  $select_imp_database_id);
+        }
+
+
+        $this->inputs = new stdClass();
+        $this->inputs->imp_origen_id = $select_imp_origen_id;
+        $this->inputs->imp_database_id = $select_imp_database_id;
+
+        return $this->inputs;
     }
 
 
