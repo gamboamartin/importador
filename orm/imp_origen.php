@@ -19,7 +19,8 @@ class imp_origen extends _modelo_parent{
 
 
 
-        $columnas_extra = array();
+        $columnas_extra['imp_origen_n_destinos'] = /** @lang sql */
+            "(SELECT COUNT(*) FROM imp_destino WHERE imp_destino.imp_origen_id = imp_origen.id)";
         $tipo_campos = array();
 
 

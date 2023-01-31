@@ -42,6 +42,7 @@ class controlador_imp_origen extends _ctl_parent_sin_codigo {
         $datatables->columns['imp_database_descripcion']['titulo'] = 'Database';
         $datatables->columns['imp_server_descripcion']['titulo'] = 'Server';
         $datatables->columns['adm_seccion_descripcion']['titulo'] = 'Seccion';
+        $datatables->columns['imp_origen_n_destinos']['titulo'] = 'N Destinos';
 
 
         $datatables->filtro = array();
