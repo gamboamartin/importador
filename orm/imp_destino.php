@@ -63,7 +63,7 @@ class imp_destino extends _modelo_parent{
 
 
         $descripcion = $imp_origen['imp_server_ip'].' '.$imp_origen['imp_database_descripcion'];
-        $descripcion .= ' '.$imp_origen['adm_seccion_descripcion'].' '.$imp_database['imp_server_ip'];
+        $descripcion .= ' '.$imp_origen['adm_seccion_descripcion'];
         $descripcion .= ' '.$imp_database['imp_database_descripcion'];
 
         $registro['descripcion'] = $descripcion;
