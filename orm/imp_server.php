@@ -47,7 +47,11 @@ class imp_server extends _modelo_parent{
         return $r_alta_bd;
     }
 
-    
+    /**
+     * Genera la descripcion select de un registro de tipo server
+     * @param array $registro
+     * @return array|string
+     */
     private function descripcion_select(array $registro): array|string
     {
 

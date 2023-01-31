@@ -45,6 +45,7 @@ class controlador_imp_server extends _ctl_parent_sin_codigo {
         $datatables->columns['imp_server_user']['titulo'] = 'User';
         $datatables->columns['imp_server_password']['titulo'] = 'Pass';
         $datatables->columns['imp_server_domain']['titulo'] = 'Domain';
+        $datatables->columns['imp_server_n_databases']['titulo'] = 'N Databases';
 
         $datatables->filtro = array();
         $datatables->filtro[] = 'imp_server.id';
