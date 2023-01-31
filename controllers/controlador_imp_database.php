@@ -44,6 +44,7 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
         $datatables->columns['imp_database_tipo']['titulo'] = 'Tipo';
         $datatables->columns['imp_server_descripcion']['titulo'] = 'Server';
         $datatables->columns['imp_server_ip']['titulo'] = 'IP';
+        $datatables->columns['imp_database_n_origenes']['titulo'] = 'N Origenes';
 
         $datatables->filtro = array();
         $datatables->filtro[] = 'imp_database.id';

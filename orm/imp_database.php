@@ -16,7 +16,10 @@ class imp_database extends _modelo_parent{
         $campos_obligatorios[] = 'tipo';
 
 
-        $columnas_extra = array();
+        $columnas_extra['imp_database_n_origenes'] = /** @lang sql */
+            "(SELECT COUNT(*) FROM imp_origen WHERE imp_origen.imp_database_id = imp_database.id)";
+
+
         $tipo_campos = array();
 
 
