@@ -51,6 +51,11 @@ class imp_database extends _modelo_parent{
         return $r_alta_bd;
     }
 
+    /**
+     * Integra la descripcion select de la entidad
+     * @param array $registro Registro en proceso
+     * @return array|string
+     */
     private function descripcion_select(array $registro): array|string
     {
         $imp_server = (new imp_server(link: $this->link))->registro(registro_id: $registro['imp_server_id']);
