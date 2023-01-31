@@ -47,7 +47,13 @@ class imp_origen extends _modelo_parent{
     }
 
 
-    private function descripcion(array $registro){
+    /**
+     * Genera la descripcion para origen
+     * @param array $registro Registro en proceso
+     * @return array
+     */
+    private function descripcion(array $registro): array
+    {
         $imp_database = (new imp_database(link: $this->link))->registro(registro_id: $registro['imp_database_id']);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener imp_database', data: $imp_database);
