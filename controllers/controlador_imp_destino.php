@@ -10,14 +10,11 @@ namespace gamboamartin\importador\controllers;
 
 
 use gamboamartin\errores\errores;
-use gamboamartin\importador\html\imp_database_html;
 use gamboamartin\importador\html\imp_destino_html;
-use gamboamartin\importador\models\imp_database;
 use gamboamartin\importador\models\imp_destino;
 use gamboamartin\system\_ctl_parent_sin_codigo;
 use gamboamartin\system\links_menu;
 use gamboamartin\template_1\html;
-use html\adm_seccion_html;
 use PDO;
 use stdClass;
 
@@ -153,7 +150,7 @@ class controlador_imp_destino extends _ctl_parent_sin_codigo {
         }
 
         $keys_selects = $this->key_select(cols:6, con_registros: true,filtro:  array(), key: 'imp_database_id',
-            keys_selects: array(), id_selected: $this->registro['imp_destino_id'], label: 'Destino');
+            keys_selects: $keys_selects, id_selected: $this->registro['imp_destino_id'], label: 'Destino');
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
         }
@@ -164,7 +161,7 @@ class controlador_imp_destino extends _ctl_parent_sin_codigo {
             return $this->retorno_error(mensaje: 'Error al integrar base',data:  $base, header: $header,ws:  $ws);
         }
 
-        
+
         return $r_modifica;
     }
 
