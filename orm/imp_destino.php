@@ -197,6 +197,28 @@ class imp_destino extends _modelo_parent{
         return $ejecuciones;
     }
 
+    public function modifica_ultimos(int $imp_destino_id){
+
+        $imp_destino = $this->registro(registro_id: $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener destino',data:  $imp_destino);
+        }
+
+        $ejecuciones = (new _modificaciones())->aplica_modificaciones_ultimas(imp_destino: $imp_destino,link: $this->link, usuario_id: $this->usuario_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar registros',data:  $ejecuciones);
+        }
+
+        $r_imp_destino = $this->upd_destino(imp_destino_id: $this->registro_id,ultimo_id_origen:  $ejecuciones->ultimo_id_origen);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
+        }
+
+        $ejecuciones->r_imp_destino = $r_imp_destino;
+
+        return $ejecuciones;
+    }
+
     private function upd_destino(int $imp_destino_id, int $ultimo_id_origen): array|stdClass
     {
         $imp_destino_upd['ultimo_id_origen'] = $ultimo_id_origen;
