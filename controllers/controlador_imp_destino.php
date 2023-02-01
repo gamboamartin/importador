@@ -138,6 +138,14 @@ class controlador_imp_destino extends _ctl_parent_sin_codigo {
         }
         print_r($r_imp_destino);exit;
     }
+    public function modifica_ultimos_id(bool $header, bool $ws = false){
+        $r_imp_destino = (new imp_destino(link: $this->link))->modifica_ultimos_id(imp_destino_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al modificar destino',data:  $r_imp_destino, header: $header,ws:  $ws);
+        }
+        print_r($r_imp_destino);exit;
+    }
+
 
 
 

@@ -33,13 +33,13 @@ class _modificaciones{
         return $ejecuciones;
     }
 
-    final public function aplica_modificaciones_ultimas(array $imp_destino, PDO $link, int $usuario_id){
+    final public function aplica_modificaciones_ultimas_id(array $imp_destino, PDO $link, int $usuario_id){
         $name_model = (new _namespace())->name_model(imp_destino: $imp_destino);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener name_modelo',data:  $name_model);
         }
 
-        $rows = (new _modelado())->rows_origen_ultimos(campo: 'fecha_update',
+        $rows = (new _modelado())->rows_origen_ultimos(campo: 'id',
             imp_origen_id: $imp_destino['imp_origen_id'], limit: 1, link: $link, name_model: $name_model);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener rows',data:  $rows);
