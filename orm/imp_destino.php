@@ -130,6 +130,31 @@ class imp_destino extends _modelo_parent{
         return $registro;
     }
 
+    public function inserta_ultimos(int $imp_destino_id){
+
+        $imp_destino = $this->registro(registro_id: $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener destino',data:  $imp_destino);
+        }
+
+
+        $ejecuciones = (new _inserciones())->aplica_inserciones_ultimas(imp_destino: $imp_destino,link: $this->link,
+            usuario_id: $this->usuario_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
+        }
+
+        $r_imp_destino = $this->upd_destino(imp_destino_id: $this->registro_id,
+            ultimo_id_origen:  $ejecuciones->ultimo_id_origen);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
+        }
+
+        $ejecuciones->r_imp_destino = $r_imp_destino;
+
+        return $ejecuciones;
+    }
+
     public function modifica_bd(array $registro, int $id, bool $reactiva = false, array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
 

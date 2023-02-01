@@ -117,5 +117,21 @@ class _modelado{
 
     }
 
+    final public function rows_origen_ultimos(string $campo, int $imp_origen_id, int $limit, PDO $link, string $name_model): array
+    {
+        $origen = $this->origen(imp_origen_id: $imp_origen_id, link: $link, name_model: $name_model);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al conectar con origen',data:  $origen);
+        }
+
+        $order[$origen->tabla.'.'.$campo] = 'DESC';
+        $rows = $origen->registros(columnas_en_bruto: true, con_sq: false, limit: $limit, order: $order);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registros',data:  $rows);
+        }
+        return $rows;
+
+    }
+
 
 }
