@@ -10,8 +10,12 @@ namespace gamboamartin\importador\controllers;
 
 
 use base\conexion;
+use base\orm\modelo;
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\imp_destino_html;
+use gamboamartin\importador\models\_conexion;
+use gamboamartin\importador\models\_modelado;
+use gamboamartin\importador\models\_namespace;
 use gamboamartin\importador\models\imp_database;
 use gamboamartin\importador\models\imp_destino;
 use gamboamartin\importador\models\imp_origen;
@@ -98,68 +102,16 @@ class controlador_imp_destino extends _ctl_parent_sin_codigo {
     }
 
     public function alta_full(bool $header, bool $ws = false){
-        $imp_origen = (new imp_origen(link: $this->link))->registro(registro_id: $this->imp_destino['imp_origen_id'],retorno_obj: true);
+
+        $r_imp_destino = (new imp_destino(link: $this->link))->alta_full(imp_destino_id: $this->registro_id);
         if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener imp_origen',data:  $imp_origen, header: $header,ws:  $ws);
+            return $this->retorno_error(mensaje: 'Error al modificar destino',data:  $r_imp_destino, header: $header,ws:  $ws);
         }
+        print_r($r_imp_destino);exit;
 
-        $entidad = trim($this->imp_destino['adm_seccion_descripcion']);
-        $namespace = trim($this->imp_destino['adm_namespace_name']);
-
-        $name_model = '\\'.$namespace.'\\models\\'.$entidad;
-        $name_model = str_replace('/', '\\', $name_model);
-
-        //print_r($name_model);exit;
-
-
-        $conf_database = new stdClass();
-        $conf_database->db_host = $imp_origen->imp_server_domain;
-        $conf_database->db_name = $imp_origen->imp_database_descripcion;
-        $conf_database->db_user = $imp_origen->imp_database_user;
-        $conf_database->db_password = $imp_origen->imp_database_password;
-        $conf_database->set_name = 'utf8';
-        $conf_database->time_out = 10;
-        $conf_database->sql_mode = '';
-        $motor = $imp_origen->imp_database_tipo;
-        $link_origen = (new conexion())->genera_link_custom(conf_database: $conf_database,motor:  $motor);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al conectar con origen',data:  $link_origen, header: $header,ws:  $ws);
-        }
-
-
-        $imp_database = (new imp_database(link: $this->link))->registro(registro_id: $this->imp_destino['imp_database_id'],retorno_obj: true);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al obtener imp_origen',data:  $imp_database, header: $header,ws:  $ws);
-        }
-
-        //$x = new \gamboamartin\administrador\models\adm_accion($this->link);
-
-        $conf_database = new stdClass();
-        $conf_database->db_host = $imp_database->imp_server_domain;
-        $conf_database->db_name = $imp_database->imp_database_descripcion;
-        $conf_database->db_user = $imp_database->imp_database_user;
-        $conf_database->db_password = $imp_database->imp_database_password;
-        $conf_database->set_name = 'utf8';
-        $conf_database->time_out = 10;
-        $conf_database->sql_mode = '';
-
-        $motor = $imp_database->imp_database_tipo;
-        $link_destino = (new conexion())->genera_link_custom(conf_database: $conf_database,motor:  $motor);
-        if(errores::$error){
-            return $this->retorno_error(mensaje: 'Error al conectar con destino',data:  $link_destino, header: $header,ws:  $ws);
-        }
-
-        $adm_acciones = (new $name_model(link: $link_origen))->registros(columnas_en_bruto: true, con_sq: false);
-
-        foreach ($adm_acciones as $adm_accion){
-            unset($adm_accion['usuario_update_id']);
-            unset($adm_accion['usuario_alta_id']);
-            $alta = (new $name_model(link: $link_destino))->alta_registro($adm_accion);
-            print_r($alta);exit;
-        }
-
-        print_r($adm_acciones);exit;
     }
+
+
 
     /**
      * Integra los campos para vistas generales
@@ -183,6 +135,8 @@ class controlador_imp_destino extends _ctl_parent_sin_codigo {
 
         return $campos_view;
     }
+
+
 
 
     protected function key_selects_txt(array $keys_selects): array
@@ -231,6 +185,8 @@ class controlador_imp_destino extends _ctl_parent_sin_codigo {
 
         return $r_modifica;
     }
+
+
 
 
 

@@ -33,7 +33,7 @@ class imp_destino extends _modelo_parent{
     public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
         if(!isset($this->registro['descripcion'])){
-            $registro = $this->descripcion(registro: $this->registro);
+            $registro = $this->descripcion(id: -1, registro: $this->registro);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error asignar descripcion', data: $registro);
             }
@@ -52,18 +52,70 @@ class imp_destino extends _modelo_parent{
         return $r_alta_bd;
     }
 
+    public function alta_full(int $imp_destino_id){
+
+        $imp_destino = $this->registro(registro_id: $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener destino',data:  $imp_destino);
+        }
+
+
+        $ejecuciones = (new _inserciones())->aplica_inserciones(imp_destino: $imp_destino,link: $this->link);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
+        }
+
+        $r_imp_destino = $this->upd_destino(imp_destino_id: $this->registro_id,ultimo_id_origen:  $ejecuciones->ultimo_id_origen);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
+        }
+
+        $ejecuciones->r_imp_destino = $r_imp_destino;
+
+        return $ejecuciones;
+    }
+
     /**
      * Integra la descripcion en un registro en proceso de alta o modifica
+     * @param int $id Identificador de la entidad
      * @param array $registro Registro en proceso
      * @return array
      */
-    private function descripcion(array $registro): array
+    private function descripcion(int $id, array $registro): array
     {
-        $imp_origen = (new imp_origen(link: $this->link))->registro(registro_id: $registro['imp_origen_id']);
+        $existen_foraneas = true;
+        $imp_database_id = -1;
+        $imp_origen_id = -1;
+        if(!isset($registro['imp_origen_id'])|| !isset($registro['imp_database_id'])){
+            $existen_foraneas = false;
+        }
+        if(isset($registro['imp_origen_id'])){
+            $imp_origen_id = $registro['imp_origen_id'];
+        }
+        if(isset($registro['imp_database_id'])){
+            $imp_database_id = $registro['imp_database_id'];
+        }
+
+        if(!$existen_foraneas) {
+            $registro_previo = $this->registro(registro_id: $id);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener registro_previo', data: $registro_previo);
+            }
+
+            if (!isset($registro['imp_origen_id'])) {
+                $imp_origen_id = $registro_previo['imp_origen_id'];
+            }
+            if (!isset($registro['imp_database_id'])) {
+                $imp_database_id = $registro_previo['imp_database_id'];
+            }
+
+        }
+
+        $imp_origen = (new imp_origen(link: $this->link))->registro(registro_id: $imp_origen_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener imp_origen', data: $imp_origen);
         }
-        $imp_database = (new imp_database(link: $this->link))->registro(registro_id: $registro['imp_database_id']);
+        $imp_database = (new imp_database(link: $this->link))->registro(registro_id: $imp_database_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener imp_database', data: $imp_database);
         }
@@ -83,7 +135,7 @@ class imp_destino extends _modelo_parent{
 
 
         if(!isset($registro['descripcion'])){
-            $registro = $this->descripcion(registro: $registro);
+            $registro = $this->descripcion(id: $this->registro_id, registro: $registro);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error asignar descripcion', data: $registro);
             }
@@ -98,5 +150,15 @@ class imp_destino extends _modelo_parent{
 
     }
 
+    private function upd_destino(int $imp_destino_id, int $ultimo_id_origen): array|stdClass
+    {
+        $imp_destino_upd['ultimo_id_origen'] = $ultimo_id_origen;
+
+        $r_imp_destino = $this->modifica_bd(registro:$imp_destino_upd,id:  $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
+        }
+        return $r_imp_destino;
+    }
 
 }
