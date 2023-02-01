@@ -52,6 +52,26 @@ class _inserciones{
         return $ejecuciones;
     }
 
+    final public function aplica_inserciones_ultimas_id(array $imp_destino, PDO $link, int $usuario_id){
+        $name_model = (new _namespace())->name_model(imp_destino: $imp_destino);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener name_modelo',data:  $name_model);
+        }
+
+        $rows = (new _modelado())->rows_origen_ultimos(campo: 'id',
+            imp_origen_id: $imp_destino['imp_origen_id'], limit: 1, link: $link, name_model: $name_model);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener rows',data:  $rows);
+        }
+
+        $ejecuciones = $this->ejecuta_inserciones(imp_database_id: $imp_destino['imp_database_id'], link: $link,
+            name_model: $name_model, rows: $rows, usuario_id: $usuario_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
+        }
+        return $ejecuciones;
+    }
+
     private function ejecuta_insercion_destino(modelo $destino, array $row): array|stdClass
     {
         $data = (new _data())->data_inserta_destino(destino: $destino,row:  $row);
