@@ -8,17 +8,9 @@
  */
 namespace gamboamartin\importador\controllers;
 
-
-use base\conexion;
-use base\orm\modelo;
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\imp_destino_html;
-use gamboamartin\importador\models\_conexion;
-use gamboamartin\importador\models\_modelado;
-use gamboamartin\importador\models\_namespace;
-use gamboamartin\importador\models\imp_database;
 use gamboamartin\importador\models\imp_destino;
-use gamboamartin\importador\models\imp_origen;
 use gamboamartin\system\_ctl_parent_sin_codigo;
 use gamboamartin\system\links_menu;
 use gamboamartin\template_1\html;
@@ -109,6 +101,14 @@ class controlador_imp_destino extends _ctl_parent_sin_codigo {
         }
         print_r($r_imp_destino);exit;
 
+    }
+
+    public function modifica_full(bool $header, bool $ws = false){
+        $r_imp_destino = (new imp_destino(link: $this->link))->modifica_full(imp_destino_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al modificar destino',data:  $r_imp_destino, header: $header,ws:  $ws);
+        }
+        print_r($r_imp_destino);exit;
     }
 
 

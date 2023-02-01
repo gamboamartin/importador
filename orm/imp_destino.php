@@ -60,7 +60,7 @@ class imp_destino extends _modelo_parent{
         }
 
 
-        $ejecuciones = (new _inserciones())->aplica_inserciones(imp_destino: $imp_destino,link: $this->link);
+        $ejecuciones = (new _inserciones())->aplica_inserciones(imp_destino: $imp_destino,link: $this->link, usuario_id: $this->usuario_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
         }
@@ -148,6 +148,28 @@ class imp_destino extends _modelo_parent{
         }
         return $r_modifica_bd;
 
+    }
+
+    public function modifica_full(int $imp_destino_id){
+
+        $imp_destino = $this->registro(registro_id: $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener destino',data:  $imp_destino);
+        }
+
+        $ejecuciones = (new _modificaciones())->aplica_modificaciones(imp_destino: $imp_destino,link: $this->link, usuario_id: $this->usuario_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar registros',data:  $ejecuciones);
+        }
+
+        $r_imp_destino = $this->upd_destino(imp_destino_id: $this->registro_id,ultimo_id_origen:  $ejecuciones->ultimo_id_origen);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
+        }
+
+        $ejecuciones->r_imp_destino = $r_imp_destino;
+
+        return $ejecuciones;
     }
 
     private function upd_destino(int $imp_destino_id, int $ultimo_id_origen): array|stdClass
