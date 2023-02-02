@@ -9,9 +9,7 @@
 namespace gamboamartin\importador\controllers;
 
 use gamboamartin\errores\errores;
-use gamboamartin\importador\html\imp_destino_html;
 use gamboamartin\importador\html\imp_ultimo_html;
-use gamboamartin\importador\models\imp_destino;
 use gamboamartin\importador\models\imp_ultimo;
 use gamboamartin\system\_ctl_parent_sin_codigo;
 use gamboamartin\system\links_menu;
@@ -38,10 +36,12 @@ class controlador_imp_ultimo extends _ctl_parent_sin_codigo {
         $datatables->columns = array();
         $datatables->columns['imp_ultimo_id']['titulo'] = 'Id';
         $datatables->columns['imp_ultimo_descripcion']['titulo'] = 'Destino';
+        $datatables->columns['imp_ultimo_id_ultimo']['titulo'] = 'Destino';
 
         $datatables->filtro = array();
         $datatables->filtro[] = 'imp_ultimo.id';
         $datatables->filtro[] = 'imp_ultimo.descripcion';
+        $datatables->filtro[] = 'imp_ultimo.id_ultimo';
 
 
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link, datatables: $datatables,
@@ -97,7 +97,7 @@ class controlador_imp_ultimo extends _ctl_parent_sin_codigo {
     final protected function campos_view(array $inputs = array()): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('codigo','descripcion');
+        $keys->inputs = array('codigo','descripcion','id_ultimo');
         $keys->selects = array();
 
         $init_data = array();
@@ -122,6 +122,11 @@ class controlador_imp_ultimo extends _ctl_parent_sin_codigo {
         }
 
         $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6,key: 'descripcion', keys_selects:$keys_selects, place_holder: 'Database');
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6,key: 'id_ultimo', keys_selects:$keys_selects, place_holder: 'Ultimo ID ejecutado');
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects);
         }
