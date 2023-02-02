@@ -76,17 +76,37 @@ class imp_destino extends _modelo_parent{
         return $ejecuciones;
     }
 
+    private function data_descripcion(int $imp_destino_id, array $registro){
+        $foraneas = $this->foraneas(imp_destino_id: $imp_destino_id, registro: $registro);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener foraneas', data: $foraneas);
+        }
+
+        $imp_origen = (new imp_origen(link: $this->link))->registro(registro_id: $foraneas->imp_origen_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener imp_origen', data: $imp_origen);
+        }
+        $imp_database = (new imp_database(link: $this->link))->registro(registro_id: $foraneas->imp_database_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener imp_database', data: $imp_database);
+        }
+        $foraneas->imp_origen = $imp_origen;
+        $foraneas->imp_database = $imp_database;
+
+        return $foraneas;
+    }
+
     /**
-     * Integra la descripcion en un registro en proceso de alta o modifica
-     * @param int $id Identificador de la entidad
+     * Inicializa datos de foraneas
      * @param array $registro Registro en proceso
-     * @return array
+     * @return stdClass
      */
-    private function descripcion(int $id, array $registro): array
+    private function data_foraneas(array $registro): stdClass
     {
         $existen_foraneas = true;
         $imp_database_id = -1;
         $imp_origen_id = -1;
+
         if(!isset($registro['imp_origen_id'])|| !isset($registro['imp_database_id'])){
             $existen_foraneas = false;
         }
@@ -97,39 +117,81 @@ class imp_destino extends _modelo_parent{
             $imp_database_id = $registro['imp_database_id'];
         }
 
-        if(!$existen_foraneas) {
-            $registro_previo = $this->registro(registro_id: $id);
-            if (errores::$error) {
-                return $this->error->error(mensaje: 'Error al obtener registro_previo', data: $registro_previo);
-            }
+        $data = new stdClass();
+        $data->existen_foraneas = $existen_foraneas;
+        $data->imp_database_id = $imp_database_id;
+        $data->imp_origen_id = $imp_origen_id;
+        return $data;
+    }
 
-            if (!isset($registro['imp_origen_id'])) {
-                $imp_origen_id = $registro_previo['imp_origen_id'];
-            }
-            if (!isset($registro['imp_database_id'])) {
-                $imp_database_id = $registro_previo['imp_database_id'];
-            }
-
-        }
-
-        $imp_origen = (new imp_origen(link: $this->link))->registro(registro_id: $imp_origen_id);
+    /**
+     * Integra la descripcion en un registro en proceso de alta o modifica
+     * @param int $id Identificador de la entidad
+     * @param array $registro Registro en proceso
+     * @return array
+     */
+    private function descripcion(int $id, array $registro): array
+    {
+        $descripcion = $this->genera_descripcion(imp_destino_id: $id,registro:  $registro);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener imp_origen', data: $imp_origen);
+            return $this->error->error(mensaje: 'Error al obtener descripcion', data: $descripcion);
         }
-        $imp_database = (new imp_database(link: $this->link))->registro(registro_id: $imp_database_id);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener imp_database', data: $imp_database);
-        }
-
-
-        $descripcion = $imp_origen['imp_server_ip'].' '.$imp_origen['imp_database_descripcion'];
-        $descripcion .= ' '.$imp_origen['adm_seccion_descripcion'];
-        $descripcion .= ' '.$imp_database['imp_database_descripcion'].' '.$imp_database['imp_server_ip'];
-        $descripcion .= ' '.$imp_database['imp_server_domain'];
-
         $registro['descripcion'] = $descripcion;
         return $registro;
     }
+
+    private function descripcion_string(stdClass $data): string
+    {
+        $descripcion = $data->imp_origen['imp_server_ip'].' '.$data->imp_origen['imp_database_descripcion'];
+        $descripcion .= ' '.$data->imp_origen['adm_seccion_descripcion'];
+        $descripcion .= ' '.$data->imp_database['imp_database_descripcion'].' '.$data->imp_database['imp_server_ip'];
+        $descripcion .= ' '.$data->imp_database['imp_server_domain'];
+        return $descripcion;
+    }
+
+    private function foraneas(int $imp_destino_id, array $registro){
+        $foraneas = $this->data_foraneas(registro: $registro);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener foraneas', data: $foraneas);
+        }
+
+        if(!$foraneas->existen_foraneas) {
+            $foraneas = $this->foraneas_previas(foraneas: $foraneas,imp_destino_id:  $imp_destino_id);
+            if (errores::$error) {
+                return $this->error->error(mensaje: 'Error al obtener foraneas', data: $foraneas);
+            }
+        }
+        return $foraneas;
+    }
+
+    private function foraneas_previas(stdClass $foraneas, int $imp_destino_id){
+        $registro_previo = $this->registro(registro_id: $imp_destino_id);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener registro_previo', data: $registro_previo);
+        }
+
+        if (!isset($registro['imp_origen_id'])) {
+            $foraneas->imp_origen_id = $registro_previo['imp_origen_id'];
+        }
+        if (!isset($registro['imp_database_id'])) {
+            $foraneas->imp_database_id = $registro_previo['imp_database_id'];
+        }
+        return $foraneas;
+    }
+
+    private function genera_descripcion(int $imp_destino_id, array $registro){
+        $data = $this->data_descripcion(imp_destino_id: $imp_destino_id,registro:  $registro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener data', data: $data);
+        }
+        $descripcion = $this->descripcion_string(data: $data);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener descripcion', data: $descripcion);
+        }
+        return $descripcion;
+    }
+
+
 
     public function inserta_ultimos(int $imp_destino_id){
 
