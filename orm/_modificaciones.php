@@ -19,7 +19,7 @@ class _modificaciones{
             return $this->error->error(mensaje: 'Error al obtener name_modelo',data:  $name_model);
         }
 
-        $rows = (new _modelado())->rows_origen(imp_destino_ultimo_id_origen: $imp_destino['imp_destino_ultimo_id_origen'],
+        $rows = (new _modelado())->rows_origen(imp_destino_ultimo_id_origen: $imp_destino['imp_destino_id_ultimo'],
             imp_origen_id: $imp_destino['imp_origen_id'], limit: 1, link: $link, name_model: $name_model);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener rows',data:  $rows);

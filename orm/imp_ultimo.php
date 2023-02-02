@@ -27,7 +27,18 @@ class imp_ultimo extends _modelo_parent{
         $this->NAMESPACE = __NAMESPACE__;
     }
 
-    public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
+    private function actualiza_id_ultimo(int $id_ultimo, int $imp_destino_id){
+        $imp_ultimo_id = $this->imp_ultimo_id_by_destino(imp_destino_id:$imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener ultimo',data:  $imp_ultimo_id);
+        }
+        $result = $this->modifica_id_ultimo(id_ultimo: $id_ultimo, imp_ultimo_id: $imp_ultimo_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar ultimo',data:  $result);
+        }
+        return $result;
+    }
+    final public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
         if(!isset($this->registro['descripcion'])){
             $registro = $this->descripcion(id: -1, registro: $this->registro);
@@ -66,6 +77,7 @@ class imp_ultimo extends _modelo_parent{
         }
 
         if(!$existen_foraneas) {
+
             $registro_previo = $this->registro(registro_id: $id);
             if (errores::$error) {
                 return $this->error->error(mensaje: 'Error al obtener registro_previo', data: $registro_previo);
@@ -88,12 +100,86 @@ class imp_ultimo extends _modelo_parent{
         return $registro;
     }
 
+    public function ejecuta_ultimo(int $id_ultimo, int $imp_destino_id){
+        $existe = $this->existe_by_destino(imp_destino_id: $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al verificar si existe',data:  $existe);
+        }
+
+        if(!$existe){
+            $result = $this->inserta_ultimo(imp_destino_id: $imp_destino_id,id_ultimo:  $id_ultimo);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al insertar ultimo',data:  $result);
+            }
+        }
+        else{
+            $result = $this->actualiza_id_ultimo(id_ultimo: $id_ultimo, imp_destino_id: $imp_destino_id);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al modificar ultimo',data:  $result);
+            }
+        }
+        return $result;
+    }
+
+    private function existe_by_destino(int $imp_destino_id){
+        $filtro['imp_destino.id'] =  $imp_destino_id;
+        $existe = $this->existe(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al verificar si existe',data:  $existe);
+        }
+        return $existe;
+    }
+
+    private function imp_ultimo_by_destino(int $imp_destino_id){
+        $filtro['imp_destino.id'] =  $imp_destino_id;
+
+        $r_imp_ultimo = $this->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener ultimo',data:  $r_imp_ultimo);
+        }
+        if((int)$r_imp_ultimo->n_registros === 0){
+            return $this->error->error(mensaje: 'Error al no existe ultimo',data:  $r_imp_ultimo);
+        }
+        if((int)$r_imp_ultimo->n_registros > 1){
+            return $this->error->error(mensaje: 'Error de integridad existe mas de un row',data:  $r_imp_ultimo);
+        }
+
+        return $r_imp_ultimo->registros[0];
+    }
+    private function imp_ultimo_id_by_destino(int $imp_destino_id){
+        $imp_ultimo = $this->imp_ultimo_by_destino(imp_destino_id: $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener ultimo',data:  $imp_ultimo);
+        }
+
+        return $imp_ultimo['imp_destino_id'];
+    }
 
 
-    public function modifica_bd(array $registro, int $id, bool $reactiva = false, array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
+    final public function imp_destino_id(int $imp_ultimo_id){
+        $imp_ultimo = $this->registro(registro_id: $imp_ultimo_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener ultimo',data:  $imp_ultimo);
+        }
+
+        return $imp_ultimo['imp_destino_id'];
+    }
+
+    private function inserta_ultimo(int $imp_destino_id, int $id_ultimo){
+        $imp_ultimo['imp_destino_id'] = $imp_destino_id;
+        $imp_ultimo['id_ultimo'] = $id_ultimo;
+        $result = $this->alta_registro(registro: $imp_ultimo);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar ultimo',data:  $result);
+        }
+        return $result;
+    }
+
+    final public function modifica_bd(array $registro, int $id, bool $reactiva = false, array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
+
         if(!isset($registro['descripcion'])){
-            $registro = $this->descripcion(id: $this->registro_id, registro: $registro);
+            $registro = $this->descripcion(id: $id, registro: $registro);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error asignar descripcion', data: $registro);
             }
@@ -105,6 +191,16 @@ class imp_ultimo extends _modelo_parent{
         }
         return $r_modifica_bd;
 
+    }
+
+    private function modifica_id_ultimo(int $id_ultimo, int $imp_ultimo_id){
+
+        $imp_ultimo_upd['id_ultimo'] = $id_ultimo;
+        $r_upd_bd = $this->modifica_bd(registro: $imp_ultimo_upd, id: $imp_ultimo_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar ultimo',data:  $r_upd_bd);
+        }
+        return $r_upd_bd;
     }
 
 
