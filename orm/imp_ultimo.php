@@ -1,6 +1,7 @@
 <?php
 namespace gamboamartin\importador\models;
 use base\orm\_modelo_parent;
+use gamboamartin\administrador\models\adm_accion;
 use gamboamartin\errores\errores;
 use PDO;
 use stdClass;
@@ -28,8 +29,8 @@ class imp_ultimo extends _modelo_parent{
         $this->NAMESPACE = __NAMESPACE__;
     }
 
-    private function actualiza_id_ultimo(int $id_ultimo, int $imp_destino_id){
-        $imp_ultimo_id = $this->imp_ultimo_id_by_destino(imp_destino_id:$imp_destino_id);
+    private function actualiza_id_ultimo(string $adm_accion_descripcion, int $id_ultimo, int $imp_destino_id){
+        $imp_ultimo_id = $this->imp_ultimo_id_by_destino(adm_accion_descripcion: $adm_accion_descripcion, imp_destino_id: $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener ultimo',data:  $imp_ultimo_id);
         }
@@ -101,20 +102,20 @@ class imp_ultimo extends _modelo_parent{
         return $registro;
     }
 
-    public function ejecuta_ultimo(int $id_ultimo, int $imp_destino_id){
-        $existe = $this->existe_by_destino(imp_destino_id: $imp_destino_id);
+    public function ejecuta_ultimo(string $adm_accion_descripcion, int $id_ultimo, int $imp_destino_id){
+        $existe = $this->existe_by_destino(adm_accion: $adm_accion_descripcion, imp_destino_id: $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al verificar si existe',data:  $existe);
         }
 
         if(!$existe){
-            $result = $this->inserta_ultimo(imp_destino_id: $imp_destino_id,id_ultimo:  $id_ultimo);
+            $result = $this->inserta_ultimo(adm_accion_descripcion: $adm_accion_descripcion, imp_destino_id: $imp_destino_id, id_ultimo: $id_ultimo);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error al insertar ultimo',data:  $result);
             }
         }
         else{
-            $result = $this->actualiza_id_ultimo(id_ultimo: $id_ultimo, imp_destino_id: $imp_destino_id);
+            $result = $this->actualiza_id_ultimo(adm_accion_descripcion: $adm_accion_descripcion, id_ultimo: $id_ultimo, imp_destino_id: $imp_destino_id);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error al modificar ultimo',data:  $result);
             }
@@ -122,8 +123,9 @@ class imp_ultimo extends _modelo_parent{
         return $result;
     }
 
-    private function existe_by_destino(int $imp_destino_id){
+    public function existe_by_destino(string $adm_accion, int $imp_destino_id){
         $filtro['imp_destino.id'] =  $imp_destino_id;
+        $filtro['adm_accion.descripcion'] =  $adm_accion;
         $existe = $this->existe(filtro: $filtro);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al verificar si existe',data:  $existe);
@@ -131,8 +133,9 @@ class imp_ultimo extends _modelo_parent{
         return $existe;
     }
 
-    private function imp_ultimo_by_destino(int $imp_destino_id){
+    public function imp_ultimo_by_destino(string $adm_accion_descripcion, int $imp_destino_id){
         $filtro['imp_destino.id'] =  $imp_destino_id;
+        $filtro['adm_accion.descripcion'] =  $adm_accion_descripcion;
 
         $r_imp_ultimo = $this->filtro_and(filtro: $filtro);
         if(errores::$error){
@@ -147,13 +150,13 @@ class imp_ultimo extends _modelo_parent{
 
         return $r_imp_ultimo->registros[0];
     }
-    private function imp_ultimo_id_by_destino(int $imp_destino_id){
-        $imp_ultimo = $this->imp_ultimo_by_destino(imp_destino_id: $imp_destino_id);
+    private function imp_ultimo_id_by_destino(string $adm_accion_descripcion, int $imp_destino_id){
+        $imp_ultimo = $this->imp_ultimo_by_destino(adm_accion_descripcion: $adm_accion_descripcion, imp_destino_id: $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener ultimo',data:  $imp_ultimo);
         }
 
-        return $imp_ultimo['imp_destino_id'];
+        return $imp_ultimo['imp_ultimo_id'];
     }
 
 
@@ -166,9 +169,16 @@ class imp_ultimo extends _modelo_parent{
         return $imp_ultimo['imp_destino_id'];
     }
 
-    private function inserta_ultimo(int $imp_destino_id, int $id_ultimo){
+    public function inserta_ultimo(string $adm_accion_descripcion, int $imp_destino_id, int $id_ultimo){
+
+        $adm_accion = (new adm_accion(link: $this->link))->accion_registro(accion: $adm_accion_descripcion,seccion:  'imp_destino');
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener accion',data:  $adm_accion);
+        }
+
         $imp_ultimo['imp_destino_id'] = $imp_destino_id;
         $imp_ultimo['id_ultimo'] = $id_ultimo;
+        $imp_ultimo['adm_accion_id'] = $adm_accion['adm_accion_id'];
         $result = $this->alta_registro(registro: $imp_ultimo);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al insertar ultimo',data:  $result);

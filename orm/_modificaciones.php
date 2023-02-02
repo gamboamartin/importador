@@ -1,6 +1,5 @@
 <?php
 namespace gamboamartin\importador\models;
-use base\conexion;
 use base\orm\modelo;
 use gamboamartin\errores\errores;
 use PDO;
@@ -13,13 +12,13 @@ class _modificaciones{
         $this->error = new errores();
     }
 
-    final public function aplica_modificaciones(array $imp_destino, PDO $link, int $usuario_id){
+    final public function aplica_modificaciones(string $adm_accion_descripcion, array $imp_destino, PDO $link, int $usuario_id){
         $name_model = (new _namespace())->name_model(imp_destino: $imp_destino);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener name_modelo',data:  $name_model);
         }
 
-        $rows = (new _modelado())->rows_origen(imp_destino_ultimo_id_origen: $imp_destino['imp_destino_id_ultimo'],
+        $rows = (new _modelado())->rows_origen(adm_accion_descripcion: $adm_accion_descripcion,
             imp_origen_id: $imp_destino['imp_origen_id'], limit: 1, link: $link, name_model: $name_model);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener rows',data:  $rows);

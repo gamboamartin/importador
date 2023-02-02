@@ -89,18 +89,40 @@ class _modelado{
 
     /**
      * rev
-     * @param int $imp_destino_ultimo_id_origen
+     * @param string $adm_accion_descripcion
+     * @param int $imp_destino_id
      * @param int $imp_origen_id
      * @param int $limit
      * @param PDO $link
      * @param string $name_model
      * @return array
      */
-    final public function rows_origen(int $imp_destino_ultimo_id_origen, int $imp_origen_id, int $limit, PDO $link, string $name_model): array
+    final public function rows_origen(string $adm_accion_descripcion, int $imp_destino_id, int $imp_origen_id, int $limit, PDO $link, string $name_model): array
     {
         $origen = $this->origen(imp_origen_id: $imp_origen_id, link: $link, name_model: $name_model);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al conectar con origen',data:  $origen);
+        }
+
+        $imp_destino_ultimo_id_origen = 0;
+
+        $existe = (new imp_ultimo(link: $link))->existe_by_destino(adm_accion: $adm_accion_descripcion, imp_destino_id: $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al verificar si existe',data:  $existe);
+        }
+
+        if(!$existe){
+            $result = (new imp_ultimo(link: $link))->inserta_ultimo(adm_accion_descripcion: $adm_accion_descripcion, imp_destino_id: $imp_destino_id, id_ultimo: 0);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al insertar ultimo',data:  $result);
+            }
+        }
+        else{
+            $imp_ultimo = (new imp_ultimo(link: $link))->imp_ultimo_by_destino(adm_accion_descripcion: $adm_accion_descripcion,imp_destino_id:  $imp_destino_id);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al obtener ultimo',data:  $imp_ultimo);
+            }
+            $imp_destino_ultimo_id_origen = $imp_ultimo['imp_ultimo_id_ultimo'];
         }
 
         $filtro_extra = $this->filtro_extra(
