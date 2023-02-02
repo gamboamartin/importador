@@ -1,7 +1,5 @@
 <?php
-
 namespace gamboamartin\importador\controllers;
-
 
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\imp_database_html;
@@ -16,6 +14,7 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
     public string $link_imp_origen_alta_bd = '';
 
     public function __construct(PDO $link, html $html = new html(), stdClass $paths_conf = new stdClass())
+
     {
 
         $datatables_custom_cols = array();
@@ -52,9 +51,6 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al obtener select_imp_database_id',data:  $select_adm_seccion_id);
         }
-
-
-
 
         $this->inputs = new stdClass();
         $this->inputs->imp_database_id = $select_imp_database_id;

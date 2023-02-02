@@ -4,10 +4,8 @@ namespace gamboamartin\importador\controllers;
 
 
 use gamboamartin\administrador\models\adm_campo;
-use gamboamartin\administrador\models\adm_tipo_dato;
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\adm_campo_html;
-use gamboamartin\importador\html\adm_tipo_dato_html;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
 use gamboamartin\template_1\html;
@@ -61,9 +59,23 @@ class controlador_adm_campo extends _ctl_base {
                 mensaje: 'Error al inicializar alta',data:  $r_alta, header: $header,ws:  $ws);
         }
 
+        $keys_selects = $this->key_select(cols:6, con_registros: true,filtro:  array(), key: 'adm_seccion_id',
+            keys_selects: array(), id_selected: -1, label: 'Seccion');
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
+        }
+
+        $keys_selects = $this->key_select(cols:6, con_registros: true,filtro:  array(), key: 'adm_tipo_dato_id',
+            keys_selects: $keys_selects, id_selected: -1, label: 'Tipo Dato');
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
+        }
 
         $keys_selects['descripcion'] = new stdClass();
         $keys_selects['descripcion']->cols = 12;
+
+        $keys_selects['sub_consulta'] = new stdClass();
+        $keys_selects['sub_consulta']->cols = 12;
 
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if(errores::$error){
@@ -71,17 +83,18 @@ class controlador_adm_campo extends _ctl_base {
                 mensaje: 'Error al obtener inputs',data:  $inputs, header: $header,ws:  $ws);
         }
 
-
         return $r_alta;
     }
 
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('codigo','descripcion');
+        $keys->inputs = array('codigo','descripcion','sub_consulta');
         $keys->selects = array();
 
         $init_data = array();
+        $init_data['adm_seccion'] = "gamboamartin\\administrador";
+        $init_data['adm_tipo_dato'] = "gamboamartin\\administrador";
 
         $campos_view = $this->campos_view_base(init_data: $init_data,keys:  $keys);
 
@@ -124,6 +137,11 @@ class controlador_adm_campo extends _ctl_base {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects);
         }
 
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12,key: 'sub_consulta', keys_selects:$keys_selects, place_holder: 'Subconsulta',required: false);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects);
+        }
+
         return $keys_selects;
     }
 
@@ -137,6 +155,17 @@ class controlador_adm_campo extends _ctl_base {
                 mensaje: 'Error al generar salida de template',data:  $r_modifica,header: $header,ws: $ws);
         }
 
+        $keys_selects = $this->key_select(cols:6, con_registros: true,filtro:  array(), key: 'adm_seccion_id',
+            keys_selects: array(), id_selected: $this->registro['adm_seccion_id'], label: 'Seccion');
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
+        }
+
+        $keys_selects = $this->key_select(cols:6, con_registros: true,filtro:  array(), key: 'adm_tipo_dato_id',
+            keys_selects: $keys_selects, id_selected: $this->registro['adm_tipo_dato_id'], label: 'Seccion');
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
+        }
 
 
         $keys_selects['descripcion'] = new stdClass();
