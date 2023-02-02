@@ -15,7 +15,6 @@ class imp_destino extends _modelo_parent{
         $campos_obligatorios[] = 'descripcion_select';
         $campos_obligatorios[] = 'imp_origen_id';
         $campos_obligatorios[] = 'imp_database_id';
-        $campos_obligatorios[] = 'ultimo_id_origen';
         $campos_obligatorios[] = 'fecha_ultima_ejecucion';
 
 

@@ -10,9 +10,10 @@ class imp_ultimo extends _modelo_parent{
     public function __construct(PDO $link){
         $tabla = 'imp_ultimo';
         $columnas = array($tabla=>false,'imp_destino'=>$tabla,'imp_origen'=>'imp_destino','imp_database'=>'imp_origen',
-            'adm_seccion'=>'imp_origen','adm_namespace'=>'adm_seccion');
+            'adm_seccion'=>'imp_origen','adm_namespace'=>'adm_seccion','adm_accion'=>$tabla);
         $campos_obligatorios[] = 'imp_destino_id';
         $campos_obligatorios[] = 'id_ultimo';
+        $campos_obligatorios[] = 'adm_accion_id';
 
 
 

@@ -75,6 +75,11 @@ class controlador_imp_ultimo extends _ctl_parent_sin_codigo {
             return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
         }
 
+        $keys_selects = $this->key_select(cols:6, con_registros: true,filtro:  array(), key: 'adm_accion_id',
+            keys_selects: $keys_selects, id_selected: -1, label: 'Accion');
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
+        }
 
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if(errores::$error){
@@ -102,6 +107,7 @@ class controlador_imp_ultimo extends _ctl_parent_sin_codigo {
 
         $init_data = array();
         $init_data['imp_destino'] = "gamboamartin\\importador";
+        $init_data['adm_accion'] = "gamboamartin\\administrador";
         $campos_view = $this->campos_view_base(init_data: $init_data,keys:  $keys);
 
         if(errores::$error){
@@ -126,7 +132,7 @@ class controlador_imp_ultimo extends _ctl_parent_sin_codigo {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects);
         }
 
-        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6,key: 'id_ultimo', keys_selects:$keys_selects, place_holder: 'Ultimo ID ejecutado');
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12,key: 'id_ultimo', keys_selects:$keys_selects, place_holder: 'Ultimo ID ejecutado');
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects);
         }
@@ -149,6 +155,12 @@ class controlador_imp_ultimo extends _ctl_parent_sin_codigo {
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
         }
+        $keys_selects = $this->key_select(cols:6, con_registros: true,filtro:  array(), key: 'adm_accion_id',
+            keys_selects: $keys_selects, id_selected: $this->registro['adm_accion_id'], label: 'Accion');
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al maquetar key_selects',data:  $keys_selects, header: $header,ws:  $ws);
+        }
+
 
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(),params_ajustados: array());
