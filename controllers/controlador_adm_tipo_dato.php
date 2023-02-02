@@ -2,10 +2,9 @@
 
 namespace gamboamartin\importador\controllers;
 
-
-use gamboamartin\administrador\models\adm_tipo_dato;
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\adm_tipo_dato_html;
+use gamboamartin\importador\models\adm_tipo_dato;
 use gamboamartin\system\_ctl_base;
 use gamboamartin\system\links_menu;
 use gamboamartin\template_1\html;
@@ -26,6 +25,7 @@ class controlador_adm_tipo_dato extends _ctl_base {
         $datatables->columns = array();
         $datatables->columns['adm_tipo_dato_id']['titulo'] = 'Id';
         $datatables->columns['adm_tipo_dato_descripcion']['titulo'] = 'Tipo Dato';
+        $datatables->columns['adm_tipo_dato_n_campos']['titulo'] = 'N Campos';
 
         parent::__construct(html: $html_, link: $link, modelo: $modelo, obj_link: $obj_link,
             datatables_custom_cols: $datatables_custom_cols,
