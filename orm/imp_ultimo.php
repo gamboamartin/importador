@@ -133,7 +133,14 @@ class imp_ultimo extends _modelo_parent{
         return $existe;
     }
 
-    public function imp_ultimo_by_destino(string $adm_accion_descripcion, int $imp_destino_id){
+    /**
+     * Obtiene el registro de imp_ultimo basado en la descripcion de la accion y el destino
+     * @param string $adm_accion_descripcion Accion en ejecucion
+     * @param int $imp_destino_id Registro de destino
+     * @return array
+     */
+    final public function imp_ultimo_by_destino(string $adm_accion_descripcion, int $imp_destino_id): array
+    {
         $filtro['imp_destino.id'] =  $imp_destino_id;
         $filtro['adm_accion.descripcion'] =  $adm_accion_descripcion;
 
