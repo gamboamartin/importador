@@ -9,6 +9,9 @@ class adm_seccion extends \gamboamartin\administrador\models\adm_seccion {
     {
         $columnas_extra['adm_seccion_n_origenes'] = /** @lang sql */
             "(SELECT COUNT(*) FROM imp_origen WHERE imp_origen.adm_seccion_id = adm_seccion.id)";
+
+        $columnas_extra['adm_seccion_n_campos'] = /** @lang sql */
+            "(SELECT COUNT(*) FROM adm_campo WHERE adm_campo.adm_seccion_id = adm_seccion.id)";
         parent::__construct(link: $link,childrens:  $childrens,columnas_extra:  $columnas_extra);
     }
 

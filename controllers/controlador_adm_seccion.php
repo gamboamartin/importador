@@ -23,6 +23,7 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
 
         $datatables_custom_cols = array();
         $datatables_custom_cols['adm_seccion_n_origenes']['titulo'] = 'N Origenes';
+        $datatables_custom_cols['adm_seccion_n_campos']['titulo'] = 'N Campos';
         $datatables_custom_cols_omite[] = 'adm_seccion_n_acciones';
 
         $this->html_local = (new adm_seccion_html(html: $html));
