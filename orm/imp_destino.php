@@ -194,40 +194,39 @@ class imp_destino extends _modelo_parent{
 
     public function inserta_ultimos(int $imp_destino_id){
 
-        $ejecuciones = (new _base_importa())->aplica_inserciones(campo: 'fecha_alta',imp_destino_id: $imp_destino_id,link: $this->link,
+        $ejecuciones = $this->_inserta_ultimos_campo(adm_accion_descripcion: __FUNCTION__,campo:  'fecha_alta',imp_destino_id:  $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
+        }
+
+        return $ejecuciones;
+    }
+
+    public function _inserta_ultimos_campo(string $adm_accion_descripcion, string $campo, int $imp_destino_id){
+        $ejecuciones = (new _base_importa())->aplica_inserciones(campo: $campo,imp_destino_id: $imp_destino_id,link: $this->link,
             usuario_id: $this->usuario_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
         }
 
-        $r_imp_destino = (new imp_ultimo(link: $this->link))->ejecuta_ultimo(adm_accion_descripcion: __FUNCTION__,
+        $r_imp_destino = (new imp_ultimo(link: $this->link))->ejecuta_ultimo(adm_accion_descripcion: $adm_accion_descripcion,
             id_ultimo: $ejecuciones->ultimo_id_origen, imp_destino_id: $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
         }
 
         $ejecuciones->r_imp_destino = $r_imp_destino;
-
-        return $ejecuciones;
     }
 
     public function inserta_ultimos_id(int $imp_destino_id){
 
 
 
-        $ejecuciones = (new _base_importa())->aplica_inserciones(campo: 'id',imp_destino_id: $imp_destino_id,link: $this->link,
-            usuario_id: $this->usuario_id);
+        $ejecuciones = $this->_inserta_ultimos_campo(adm_accion_descripcion: __FUNCTION__,campo:  'id',imp_destino_id:  $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
         }
 
-        $r_imp_destino = (new imp_ultimo(link: $this->link))->ejecuta_ultimo(adm_accion_descripcion: __FUNCTION__,
-            id_ultimo: $ejecuciones->ultimo_id_origen, imp_destino_id: $imp_destino_id);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
-        }
-
-        $ejecuciones->r_imp_destino = $r_imp_destino;
 
         return $ejecuciones;
     }
@@ -276,16 +275,14 @@ class imp_destino extends _modelo_parent{
         return $ejecuciones;
     }
 
-    public function modifica_ultimos(int $imp_destino_id){
-
-
-        $ejecuciones = (new _base_importa())->aplica_modificaciones(campo: 'fecha_update',imp_destino_id: $imp_destino_id,link: $this->link,
+    public function modifica_ultimos_campo(string $adm_accion_descripcion, string $campo, int $imp_destino_id){
+        $ejecuciones = (new _base_importa())->aplica_modificaciones(campo: $campo,imp_destino_id: $imp_destino_id,link: $this->link,
             usuario_id: $this->usuario_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
         }
 
-        $r_imp_destino = (new imp_ultimo(link: $this->link))->ejecuta_ultimo(adm_accion_descripcion: __FUNCTION__,
+        $r_imp_destino = (new imp_ultimo(link: $this->link))->ejecuta_ultimo(adm_accion_descripcion: $adm_accion_descripcion,
             id_ultimo: $ejecuciones->ultimo_id_origen, imp_destino_id: $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
@@ -296,21 +293,24 @@ class imp_destino extends _modelo_parent{
         return $ejecuciones;
     }
 
-    public function modifica_ultimos_id(int $imp_destino_id){
+    public function modifica_ultimos(int $imp_destino_id){
 
-        $ejecuciones = (new _base_importa())->aplica_modificaciones(campo: 'id',imp_destino_id: $imp_destino_id,link: $this->link,
-            usuario_id: $this->usuario_id);
+
+        $ejecuciones = $this->modifica_ultimos_campo(adm_accion_descripcion: __FUNCTION__, campo: 'fecha_update', imp_destino_id: $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
         }
 
-        $r_imp_destino = (new imp_ultimo(link: $this->link))->ejecuta_ultimo(adm_accion_descripcion: __FUNCTION__,
-            id_ultimo: $ejecuciones->ultimo_id_origen, imp_destino_id: $imp_destino_id);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
-        }
 
-        $ejecuciones->r_imp_destino = $r_imp_destino;
+        return $ejecuciones;
+    }
+
+    public function modifica_ultimos_id(int $imp_destino_id){
+
+        $ejecuciones = $this->modifica_ultimos_campo(adm_accion_descripcion: __FUNCTION__, campo: 'id', imp_destino_id: $imp_destino_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
+        }
 
         return $ejecuciones;
     }
