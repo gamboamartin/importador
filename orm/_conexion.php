@@ -13,8 +13,8 @@ class _conexion{
     }
 
     /**
-     * rev
-     * @param stdClass $data_cnx
+     * Genera la configuracion de una base de datos
+     * @param stdClass $data_cnx Datos de conexion
      * @return stdClass
      */
     private function conf_database(stdClass $data_cnx): stdClass

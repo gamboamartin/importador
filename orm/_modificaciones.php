@@ -13,44 +13,20 @@ class _modificaciones{
     }
 
     final public function aplica_modificaciones(string $adm_accion_descripcion, array $imp_destino, PDO $link, int $usuario_id){
-        $name_model = (new _namespace())->name_model(imp_destino: $imp_destino);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener name_modelo',data:  $name_model);
-        }
 
-        $rows = (new _modelado())->rows_origen(adm_accion_descripcion: $adm_accion_descripcion,
-            imp_origen_id: $imp_destino['imp_origen_id'], limit: 1, link: $link, name_model: $name_model);
+        $data_origen = (new _base_importa())->data_origen(adm_accion_descripcion: $adm_accion_descripcion,imp_destino:  $imp_destino,link:  $link);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener rows',data:  $rows);
+            return $this->error->error(mensaje: 'Error al obtener rows',data:  $data_origen);
         }
 
         $ejecuciones = $this->ejecuta_modificaciones(imp_database_id: $imp_destino['imp_database_id'], link: $link,
-            name_model: $name_model, rows: $rows, usuario_id: $usuario_id);
+            name_model: $data_origen->name_model, rows: $data_origen->rows, usuario_id: $usuario_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al modificar registros',data:  $ejecuciones);
         }
         return $ejecuciones;
     }
 
-    final public function aplica_modificaciones_ultimas_id(array $imp_destino, PDO $link, int $usuario_id){
-        $name_model = (new _namespace())->name_model(imp_destino: $imp_destino);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener name_modelo',data:  $name_model);
-        }
-
-        $rows = (new _modelado())->rows_origen_ultimos(campo: 'id',
-            imp_origen_id: $imp_destino['imp_origen_id'], limit: 1, link: $link, name_model: $name_model);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener rows',data:  $rows);
-        }
-
-        $ejecuciones = $this->ejecuta_modificaciones(imp_database_id: $imp_destino['imp_database_id'], link: $link,
-            name_model: $name_model, rows: $rows, usuario_id: $usuario_id);
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al modificar registros',data:  $ejecuciones);
-        }
-        return $ejecuciones;
-    }
 
     private function ejecuta_modificacion_destino(modelo $destino, array $row): array|stdClass
     {
@@ -86,7 +62,7 @@ class _modificaciones{
         return $retorno;
     }
 
-    private function ejecuta_modificaciones(int $imp_database_id,PDO $link, string $name_model, array $rows, int $usuario_id){
+    public function ejecuta_modificaciones(int $imp_database_id,PDO $link, string $name_model, array $rows, int $usuario_id){
         $destino = (new _modelado())->destino(imp_database_id: $imp_database_id, link: $link, name_model: $name_model);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al conectar con destino',data:  $destino);
