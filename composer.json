@@ -15,8 +15,8 @@
           "gamboamartin\\importador\\controllers\\": "controllers",
           "gamboamartin\\importador\\models\\": "orm",
           "config\\": "config/",
-          "gamboamartin\\importador\\tests\\": "tests",
           "links\\": "links/",
+          "gamboamartin\\importador\\tests\\": "tests/",
           "gamboamartin\\importador\\html\\": "templates/directivas/"
 
         }

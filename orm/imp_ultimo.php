@@ -138,9 +138,21 @@ class imp_ultimo extends _modelo_parent{
      * @param string $adm_accion_descripcion Accion en ejecucion
      * @param int $imp_destino_id Registro de destino
      * @return array
+     * @version 0.44.0
+     *
      */
     final public function imp_ultimo_by_destino(string $adm_accion_descripcion, int $imp_destino_id): array
     {
+
+        $adm_accion_descripcion = trim($adm_accion_descripcion);
+        if($adm_accion_descripcion === ''){
+            return $this->error->error(mensaje: 'Error adm_accion_descripcion esta vacio',
+                data:  $adm_accion_descripcion);
+        }
+        if($imp_destino_id<=0){
+            return $this->error->error(mensaje: 'Error imp_destino_id debe ser mayor a 0',data:  $imp_destino_id);
+        }
+
         $filtro['imp_destino.id'] =  $imp_destino_id;
         $filtro['adm_accion.descripcion'] =  $adm_accion_descripcion;
 
