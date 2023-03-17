@@ -52,6 +52,20 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
 
     }
 
+    public function alta_full(bool $header, bool $ws = false){
+
+
+        $r_alta_full = (new adm_seccion(link: $this->link))->alta_full(adm_seccion_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(
+                mensaje: 'Error al insertar destinos',data:  $r_alta_full, header: $header,ws:  $ws);
+        }
+
+        var_dump($r_alta_full);
+        exit;
+
+    }
+
     final public function campos(bool $header = true, bool $ws = false): array|stdClass|string
     {
         $contenido_table = (new _base_importador())->campos(controler: $this, next_accion: __FUNCTION__);
