@@ -216,6 +216,7 @@ class imp_destino extends _modelo_parent{
         }
 
         $ejecuciones->r_imp_destino = $r_imp_destino;
+        return $ejecuciones;
     }
 
     public function inserta_ultimos_id(int $imp_destino_id){

@@ -54,4 +54,5 @@ vendor/
 archivos
 .idea
 .idea/*
+*.lock
 

@@ -68,7 +68,7 @@ class _base_importa{
         }
 
         $rows = (new _modelado())->rows_origen_ultimos(campo: $campo,
-            imp_origen_id: $imp_destino['imp_origen_id'], limit: 1, link: $link, name_model: $name_model);
+            imp_origen_id: $imp_destino['imp_origen_id'], limit: 10, link: $link, name_model: $name_model);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener rows',data:  $rows);
         }
