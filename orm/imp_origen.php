@@ -103,6 +103,17 @@ class imp_origen extends _modelo_parent{
         return $registro;
     }
 
+    final public function destinos(int $imp_origen_id){
+
+        $filtro['imp_origen.id'] = $imp_origen_id;
+        $r_imp_destinos = (new imp_destino(link: $this->link))->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener destinos', data: $r_imp_destinos);
+        }
+        return $r_imp_destinos->registros;
+
+    }
+
     public function modifica_bd(array $registro, int $id, bool $reactiva = false, array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
         if(!isset($registro['descripcion'])){

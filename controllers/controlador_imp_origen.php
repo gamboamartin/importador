@@ -12,6 +12,7 @@ namespace gamboamartin\importador\controllers;
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\imp_database_html;
 use gamboamartin\importador\html\imp_origen_html;
+use gamboamartin\importador\models\imp_destino;
 use gamboamartin\importador\models\imp_origen;
 use gamboamartin\system\_ctl_parent_sin_codigo;
 use gamboamartin\system\links_menu;
@@ -107,6 +108,27 @@ class controlador_imp_origen extends _ctl_parent_sin_codigo {
 
 
         return $r_alta;
+
+    }
+
+    public function alta_full(bool $header, bool $ws = false){
+        $imp_destinos = (new imp_origen(link: $this->link))->destinos(imp_origen_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(
+                mensaje: 'Error al obtener destinos',data:  $imp_destinos, header: $header,ws:  $ws);
+        }
+        foreach ($imp_destinos as $imp_destino){
+            $r_alta_full = (new imp_destino(link: $this->link))->alta_full(imp_destino_id: $imp_destino['imp_destino_id']);
+            if(errores::$error){
+                return $this->retorno_error(
+                    mensaje: 'Error al insertar destinos',data:  $r_alta_full, header: $header,ws:  $ws);
+            }
+            var_dump($r_alta_full);
+        }
+
+
+
+        exit;
 
     }
 
