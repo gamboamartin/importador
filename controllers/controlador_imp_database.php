@@ -257,21 +257,11 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
     public function origenes(bool $header = true, bool $ws = false): array|stdClass|string
     {
 
-        $data_view = new stdClass();
-        $data_view->names = array('Id','Origen', 'DB','IP','Seccion','Acciones');
-        $data_view->keys_data = array('imp_origen_id','imp_origen_descripcion','imp_database_descripcion',
-            'imp_server_ip','adm_seccion_descripcion');
-        $data_view->key_actions = 'acciones';
-        $data_view->namespace_model = 'gamboamartin\\importador\\models';
-        $data_view->name_model_children = 'imp_origen';
-
-
-        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__, not_actions: $this->not_actions);
+        $contenido_table = (new _base_importador())->origenes(controler: $this,next_accion: __FUNCTION__);
         if(errores::$error){
             return $this->retorno_error(
                 mensaje: 'Error al obtener tbody',data:  $contenido_table, header: $header,ws:  $ws);
         }
-
 
         return $contenido_table;
 

@@ -55,6 +55,11 @@ class imp_server extends _modelo_parent{
     private function descripcion_select(array $registro): array|string
     {
 
+        $keys = array('domain','ip');
+        $valida = $this->validacion->valida_existencia_keys(keys: $keys,registro:  $registro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al validar registro', data: $valida);
+        }
         $descripcion_select = $registro['domain'].' '.$registro['ip'];
 
         $registro['descripcion_select'] = $descripcion_select;

@@ -80,20 +80,11 @@ class controlador_adm_tipo_dato extends _ctl_base {
     final public function campos(bool $header = true, bool $ws = false): array|stdClass|string
     {
 
-        $data_view = new stdClass();
-        $data_view->names = array('Id','Campo', 'Tipo Dato','Seccion','Acciones');
-        $data_view->keys_data = array('adm_campo_id','adm_campo_descripcion','adm_tipo_dato_descripcion','adm_seccion_descripcion');
-        $data_view->key_actions = 'acciones';
-        $data_view->namespace_model = 'gamboamartin\\administrador\\models';
-        $data_view->name_model_children = 'adm_campo';
-
-
-        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__, not_actions: $this->not_actions);
+        $contenido_table = (new _base_importador())->campos(controler: $this, next_accion: __FUNCTION__);
         if(errores::$error){
             return $this->retorno_error(
                 mensaje: 'Error al obtener tbody',data:  $contenido_table, header: $header,ws:  $ws);
         }
-
 
         return $contenido_table;
 

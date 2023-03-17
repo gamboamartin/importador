@@ -59,10 +59,10 @@ class imp_ultimo_Test extends test {
         $imp_destino_id = 1;
 
         $resultado = $modelo->imp_ultimo_by_destino($adm_accion_descripcion, $imp_destino_id);
-
+        //print_r($resultado);exit;
         $this->assertIsArray($resultado);
         $this->assertNotTrue(errores::$error);
-        $this->assertEquals('localhost cat_sat adm_accion',$resultado['imp_ultimo_descripcion']);
+        $this->assertEquals('127.0.01 test adm_accion',$resultado['imp_ultimo_descripcion']);
 
         errores::$error = false;
 

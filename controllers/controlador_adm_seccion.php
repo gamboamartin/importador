@@ -11,7 +11,7 @@ use PDO;
 use stdClass;
 
 class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_adm_seccion {
-    public array $not_actions = array('acciones','elimina_bd','modifica','status');
+    public array $not_actions = array();
     public string $link_imp_origen_alta_bd = '';
     public string $link_adm_campo_alta_bd = '';
 
@@ -54,21 +54,11 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
 
     final public function campos(bool $header = true, bool $ws = false): array|stdClass|string
     {
-
-        $data_view = new stdClass();
-        $data_view->names = array('Id','Campo', 'Tipo Dato','Seccion','Acciones');
-        $data_view->keys_data = array('adm_campo_id','adm_campo_descripcion','adm_tipo_dato_descripcion','adm_seccion_descripcion');
-        $data_view->key_actions = 'acciones';
-        $data_view->namespace_model = 'gamboamartin\\administrador\\models';
-        $data_view->name_model_children = 'adm_campo';
-
-
-        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__, not_actions: $this->not_actions);
+        $contenido_table = (new _base_importador())->campos(controler: $this, next_accion: __FUNCTION__);
         if(errores::$error){
             return $this->retorno_error(
                 mensaje: 'Error al obtener tbody',data:  $contenido_table, header: $header,ws:  $ws);
         }
-
 
         return $contenido_table;
 
@@ -76,7 +66,7 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
 
     protected function inputs_children(stdClass $registro): array|stdClass{
         $select_imp_database_id = (new imp_database_html(html: $this->html_base))->select_imp_database_id(
-            cols:12,con_registros: true,id_selected:  -1,link:  $this->link, disabled: false);
+            cols:12,con_registros: true,id_selected:  -1,link:  $this->link);
 
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al obtener select_imp_database_id',data:  $select_imp_database_id);
@@ -90,7 +80,7 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
         }
 
         $select_adm_tipo_dato_id = (new adm_tipo_dato_html(html: $this->html_base))->select_adm_tipo_dato_id(
-            cols:12,con_registros: true,id_selected:  -1,link:  $this->link, disabled: false);
+            cols:12,con_registros: true,id_selected:  -1,link:  $this->link);
 
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al obtener select_adm_tipo_dato_id',data:  $select_adm_tipo_dato_id);
@@ -113,16 +103,7 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
     public function origenes(bool $header = true, bool $ws = false): array|stdClass|string
     {
 
-        $data_view = new stdClass();
-        $data_view->names = array('Id','Origen', 'DB','IP','Seccion','Acciones');
-        $data_view->keys_data = array('imp_origen_id','imp_origen_descripcion','imp_database_descripcion',
-            'imp_server_ip','adm_seccion_descripcion');
-        $data_view->key_actions = 'acciones';
-        $data_view->namespace_model = 'gamboamartin\\importador\\models';
-        $data_view->name_model_children = 'imp_origen';
-
-
-        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__, not_actions: $this->not_actions);
+        $contenido_table = (new _base_importador())->origenes(controler: $this,next_accion: __FUNCTION__);
         if(errores::$error){
             return $this->retorno_error(
                 mensaje: 'Error al obtener tbody',data:  $contenido_table, header: $header,ws:  $ws);
