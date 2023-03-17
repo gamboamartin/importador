@@ -53,6 +53,22 @@ class imp_origen extends _modelo_parent{
         return $r_alta_bd;
     }
 
+    final public function alta_full(int $imp_origen_id){
+        $r_altas_full = array();
+        $imp_destinos = $this->destinos(imp_origen_id: $imp_origen_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener destinos',data:  $imp_destinos);
+        }
+        foreach ($imp_destinos as $imp_destino){
+            $r_alta_full = (new imp_destino(link: $this->link))->alta_full(imp_destino_id: $imp_destino['imp_destino_id']);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al insertar destinos',data:  $r_alta_full);
+            }
+            $r_altas_full[] = $r_alta_full;
+        }
+        return $r_altas_full;
+    }
+
 
     /**
      * Genera la descripcion para origen
@@ -103,7 +119,7 @@ class imp_origen extends _modelo_parent{
         return $registro;
     }
 
-    final public function destinos(int $imp_origen_id){
+    private function destinos(int $imp_origen_id){
 
         $filtro['imp_origen.id'] = $imp_origen_id;
         $r_imp_destinos = (new imp_destino(link: $this->link))->filtro_and(filtro: $filtro);

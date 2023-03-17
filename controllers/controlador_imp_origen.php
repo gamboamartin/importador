@@ -112,22 +112,13 @@ class controlador_imp_origen extends _ctl_parent_sin_codigo {
     }
 
     public function alta_full(bool $header, bool $ws = false){
-        $imp_destinos = (new imp_origen(link: $this->link))->destinos(imp_origen_id: $this->registro_id);
+        $r_alta_full = (new imp_origen(link: $this->link))->alta_full(imp_origen_id: $this->registro_id);
         if(errores::$error){
             return $this->retorno_error(
-                mensaje: 'Error al obtener destinos',data:  $imp_destinos, header: $header,ws:  $ws);
-        }
-        foreach ($imp_destinos as $imp_destino){
-            $r_alta_full = (new imp_destino(link: $this->link))->alta_full(imp_destino_id: $imp_destino['imp_destino_id']);
-            if(errores::$error){
-                return $this->retorno_error(
-                    mensaje: 'Error al insertar destinos',data:  $r_alta_full, header: $header,ws:  $ws);
-            }
-            var_dump($r_alta_full);
+                mensaje: 'Error al insertar destinos',data:  $r_alta_full, header: $header,ws:  $ws);
         }
 
-
-
+        var_dump($r_alta_full);
         exit;
 
     }

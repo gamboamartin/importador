@@ -99,7 +99,7 @@ class controlador_imp_destino extends _ctl_parent_sin_codigo {
         if(errores::$error){
             return $this->retorno_error(mensaje: 'Error al modificar destino',data:  $r_imp_destino, header: $header,ws:  $ws);
         }
-        print_r($r_imp_destino);exit;
+        return $r_imp_destino;
 
     }
 
