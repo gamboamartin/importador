@@ -65,6 +65,13 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
     }
 
     protected function inputs_children(stdClass $registro): array|stdClass{
+
+        $r_parent = parent::inputs_children(registro: $registro);
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al obtener inputs',data:  $r_parent);
+        }
+
+
         $select_imp_database_id = (new imp_database_html(html: $this->html_base))->select_imp_database_id(
             cols:12,con_registros: true,id_selected:  -1,link:  $this->link);
 
@@ -91,7 +98,6 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
             return $this->errores->error(mensaje: 'Error al obtener adm_campo_descripcion',data:  $adm_campo_descripcion);
         }
 
-        $this->inputs = new stdClass();
         $this->inputs->imp_database_id = $select_imp_database_id;
         $this->inputs->adm_seccion_id = $select_adm_seccion_id;
         $this->inputs->adm_tipo_dato_id = $select_adm_tipo_dato_id;
