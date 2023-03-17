@@ -128,7 +128,6 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
                 mensaje: 'Error al obtener tbody',data:  $contenido_table, header: $header,ws:  $ws);
         }
 
-
         return $contenido_table;
 
     }

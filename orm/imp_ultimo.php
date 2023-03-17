@@ -70,7 +70,7 @@ class imp_ultimo extends _modelo_parent{
         $existen_foraneas = true;
         $imp_destino_id = -1;
 
-        if(!isset($registro['imp_destino_id'])|| !isset($registro['imp_destino_id'])){
+        if(!isset($registro['imp_destino_id'])){
             $existen_foraneas = false;
         }
 
