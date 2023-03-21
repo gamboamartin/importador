@@ -49,7 +49,7 @@ class _base_importa{
 
         $rows = (new _modelado())->rows_origen(adm_accion_descripcion: $adm_accion_descripcion,
             imp_destino_id: $imp_destino['imp_destino_id'], imp_origen_id: $imp_destino['imp_origen_id'],
-            limit: 100, link: $link, name_model: $name_model);
+            limit: 1000, link: $link, name_model: $name_model);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener rows',data:  $rows);
         }
