@@ -98,6 +98,22 @@ class imp_database extends _modelo_parent{
 
     }
 
+    final public function inserta_ultimos(int $imp_database_id){
+        $r_altas_full = array();
+        $imp_destinos = $this->destinos(imp_database_id: $imp_database_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener destinos',data:  $imp_destinos);
+        }
+        foreach ($imp_destinos as $imp_destino){
+            $r_alta_full = (new imp_destino(link: $this->link))->inserta_ultimos(imp_destino_id: $imp_destino['imp_destino_id']);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al insertar destinos',data:  $r_alta_full);
+            }
+            $r_altas_full[] = $r_alta_full;
+        }
+        return $r_altas_full;
+    }
+
     public function modifica_bd(array $registro, int $id, bool $reactiva = false, array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
         if(!isset($registro['descripcion_select'])){
