@@ -36,17 +36,31 @@ if(errores::$error){
 }
 
 foreach ($databases as $database){
-
-    $alta = $imp_database_modelo->alta_full(imp_database_id: $database['imp_database_id']);
+    $out = $imp_database_modelo->alta_full(imp_database_id: $database['imp_database_id']);
     if(errores::$error){
-        $error = (new errores())->error(mensaje: 'Error',data:  $alta);
+        $error = (new errores())->error(mensaje: 'Error',data:  $out);
         unlink($file_lock);
         print_r($error);
         exit;
     }
-    print_r($alta);
-    echo "<br><br>";
+    echo '<br>----------DATABASE-------------------<br>';
+    echo "database origen: <b>$database[imp_database_descripcion]</b> ";
+    echo "server origen: <b>$database[imp_server_descripcion]</b>";
+    foreach ($out as $data){
 
+        echo "imp_destino_id: <b>$data->imp_destino_id</b>";
+        echo "imp_destino_descripcion: <b>$data->imp_destino_descripcion </b> ";
+        echo '<br>----------EJECUCIONES-------------------<br>';
+        foreach ($data->r_alta_full->ejecuciones as $ejecucion){
+
+            $row_id = $ejecucion->data->row['id'];
+            $aplica_alta = $ejecucion->alta->aplica_alta;
+            echo "Id Origen: <b>$row_id </b> ";
+            echo "Aplica Alta: <b>$aplica_alta</b> ";
+            echo "<br><br>";
+        }
+    }
+    echo "<br>-------------------------------------------<br>";
 }
 
 unlink($file_lock);

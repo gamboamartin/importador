@@ -29,7 +29,6 @@ class _parents{
         $existe_parent = false;
         $aplica_parents = false;
 
-        //print_r($parents);exit;
 
         foreach ($parents as $model_parent =>$parent){
 

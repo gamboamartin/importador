@@ -52,19 +52,27 @@ class imp_database extends _modelo_parent{
     }
 
     final public function alta_full(int $imp_database_id){
-        $r_altas_full = array();
+        $out = array();
         $imp_destinos = $this->destinos(imp_database_id: $imp_database_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener destinos',data:  $imp_destinos);
         }
+
         foreach ($imp_destinos as $imp_destino){
             $r_alta_full = (new imp_destino(link: $this->link))->alta_full(imp_destino_id: $imp_destino['imp_destino_id']);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error al insertar destinos',data:  $r_alta_full);
             }
-            $r_altas_full[] = $r_alta_full;
+            $data_out = new stdClass();
+
+            $data_out->r_alta_full = $r_alta_full;
+            $data_out->imp_destino_id = $imp_destino['imp_destino_id'];
+            $data_out->imp_destino_descripcion = $imp_destino['imp_destino_descripcion'];
+
+            $out[] = $data_out;
+
         }
-        return $r_altas_full;
+        return $out;
     }
 
 

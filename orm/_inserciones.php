@@ -33,11 +33,11 @@ class _inserciones{
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener datos',data:  $data);
         }
-        //print_r($data);exit;
         $alta = new stdClass();
         $alta->data_parents = new stdClass();
         $alta->data_parents->existe_parent =false;
         $alta->data_parents->aplica_parents =true;
+        $alta->aplica_alta = 'NO';
         if(!$data->existe) {
             $alta = $this->inserta_destino(destino: $destino,row:  $data->row);
             if(errores::$error){
@@ -48,6 +48,7 @@ class _inserciones{
         $retorno = new stdClass();
         $retorno->data = $data;
         $retorno->alta = $alta;
+        $retorno->aplica_alta = $alta->aplica_alta;
 
 
 
@@ -76,24 +77,23 @@ class _inserciones{
      */
     public function inserta_destino(modelo $destino, array $row): array|stdClass
     {
-       // var_dump($destino);exit;
         $retorno = new stdClass();
+        $retorno->aplica_alta = 'NO';
 
         $data_parents = (new _parents())->data_parents(destino: $destino, row: $row);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener parents registro',data:  $data_parents);
         }
-        //var_dump($data_parents);exit;
 
         $retorno->data_parents = $data_parents;
         if(!$data_parents->existe_parent && $data_parents->aplica_parents){
-
             return $retorno;
         }
         $alta = $destino->alta_registro(registro: $row);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al insertar registro',data:  $alta);
         }
+        $retorno->aplica_alta = 'SI';
         $retorno->alta = $alta;
         return $retorno;
 
