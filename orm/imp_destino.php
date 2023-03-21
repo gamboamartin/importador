@@ -209,13 +209,14 @@ class imp_destino extends _modelo_parent{
             return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
         }
 
+        /*
         $r_imp_destino = (new imp_ultimo(link: $this->link))->ejecuta_ultimo(adm_accion_descripcion: $adm_accion_descripcion,
             id_ultimo: $ejecuciones->ultimo_id_origen, imp_destino_id: $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al modificar destino',data:  $r_imp_destino);
-        }
+        }*/
 
-        $ejecuciones->r_imp_destino = $r_imp_destino;
+        //$ejecuciones->r_imp_destino = $r_imp_destino;
         return $ejecuciones;
     }
 
