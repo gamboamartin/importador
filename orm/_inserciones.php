@@ -109,9 +109,9 @@ class _inserciones{
                 return $this->error->error(mensaje: 'Error al insertar registro',data:  $exe);
             }
             $ejecuciones[] = $exe;
-            if(!$exe->alta->data_parents->existe_parent && $exe->alta->data_parents->aplica_parents){
-                break;
-            }
+            //if(!$exe->alta->data_parents->existe_parent && $exe->alta->data_parents->aplica_parents){
+             //   break;
+            //}
 
         }
         $data = new stdClass();
