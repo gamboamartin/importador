@@ -33,6 +33,7 @@ class _inserciones{
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener datos',data:  $data);
         }
+        //print_r($data);exit;
         $alta = new stdClass();
         $alta->data_parents = new stdClass();
         $alta->data_parents->existe_parent =false;
@@ -75,12 +76,14 @@ class _inserciones{
      */
     public function inserta_destino(modelo $destino, array $row): array|stdClass
     {
+       // var_dump($destino);exit;
         $retorno = new stdClass();
 
         $data_parents = (new _parents())->data_parents(destino: $destino, row: $row);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener parents registro',data:  $data_parents);
         }
+        //var_dump($data_parents);exit;
 
         $retorno->data_parents = $data_parents;
         if(!$data_parents->existe_parent && $data_parents->aplica_parents){
