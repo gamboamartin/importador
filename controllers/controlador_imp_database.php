@@ -217,6 +217,17 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
         exit;
     }
 
+    public function inserta_ultimos_id(bool $header, bool $ws = false){
+        $r_alta_full = (new imp_database(link: $this->link))->inserta_ultimos_id(imp_database_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(
+                mensaje: 'Error al insertar destinos',data:  $r_alta_full, header: $header,ws:  $ws);
+        }
+
+        var_dump($r_alta_full);
+        exit;
+    }
+
 
 
     protected function key_selects_txt(array $keys_selects): array
