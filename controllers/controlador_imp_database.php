@@ -9,9 +9,12 @@
 namespace gamboamartin\importador\controllers;
 
 
+use base\orm\estructuras;
+use gamboamartin\comercial\models\com_tmp_cte_dp;
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\imp_database_html;
 use gamboamartin\importador\html\imp_origen_html;
+use gamboamartin\importador\models\_conexion;
 use gamboamartin\importador\models\imp_database;
 use gamboamartin\system\_ctl_parent_sin_codigo;
 use gamboamartin\system\links_menu;
@@ -29,8 +32,12 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
     public string $link_imp_origen_alta_bd = '';
     public string $link_imp_destino_alta_bd = '';
 
+    public array $com_tmp_cte_dps = array();
+
 
     public function __construct(PDO $link, html $html = new html(), stdClass $paths_conf = new stdClass()){
+
+
         $modelo = new imp_database(link: $link);
 
         $html_ = new imp_database_html(html: $html);
@@ -42,7 +49,6 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
         $datatables->columns['imp_database_id']['titulo'] = 'Id';
         $datatables->columns['imp_database_descripcion']['titulo'] = 'Database';
         $datatables->columns['imp_database_user']['titulo'] = 'User';
-        $datatables->columns['imp_database_password']['titulo'] = 'Password';
         $datatables->columns['imp_database_tipo']['titulo'] = 'Tipo';
         $datatables->columns['imp_server_descripcion']['titulo'] = 'Server';
         $datatables->columns['imp_server_ip']['titulo'] = 'IP';
@@ -297,6 +303,72 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
         }
 
         return $contenido_table;
+
+    }
+
+    public function regenera_dom_cte(bool $header = true, bool $ws = false){
+
+        $imp_database = (new imp_database(link: $this->link))->registro(registro_id: $this->registro_id);
+        if(errores::$error){
+
+            $error = $this->errores->error(mensaje: 'Error al obtener imp_database',data:  $imp_database);
+            print_r($error);
+            exit;
+        }
+
+        $link_destino = (new _conexion())->link_destino(imp_database_id: $this->registro_id,link:  $this->link);
+        if(errores::$error){
+
+            $error = $this->errores->error(mensaje: 'Error al conectar imp_database',data:  $link_destino);
+            print_r($error);
+            exit;
+        }
+
+        //print_r($imp_database);exit;
+        $name_db = $imp_database['imp_database_descripcion'];
+
+        $estructura = (new estructuras(link: $link_destino));
+        $entidades = $estructura->entidades(name_db: $name_db);
+        if(errores::$error){
+
+            $error =  $this->errores->error(mensaje: 'Error al obtener entidades',data:  $entidades);
+            print_r($error);
+            exit;
+        }
+
+        if(!in_array('com_tmp_cte_dp', $entidades)){
+
+            echo 'No aplica';
+            exit;
+        }
+
+
+        $com_tmp_cte_dp_modelo = (new com_tmp_cte_dp(link: $link_destino));
+
+        $com_tmp_cte_dps = $com_tmp_cte_dp_modelo->registros();
+
+        foreach ($com_tmp_cte_dps as $com_tmp_cte_dp){
+            $regenera = $com_tmp_cte_dp_modelo->regenera(com_tmp_cte_dp_id: $com_tmp_cte_dp['com_tmp_cte_dp_id']);
+            if(errores::$error){
+
+                $error =  $this->errores->error(mensaje: 'Error al regenerar',data:  $regenera);
+                print_r($error);
+                exit;
+            }
+
+        }
+
+        if(errores::$error){
+
+            $error =  $this->errores->error(mensaje: 'Error al obtener temporales',data:  $com_tmp_cte_dps);
+            print_r($error);
+            exit;
+        }
+
+
+        $this->com_tmp_cte_dps = $com_tmp_cte_dps;
+
+
 
     }
 

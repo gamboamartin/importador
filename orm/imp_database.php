@@ -8,6 +8,7 @@ use stdClass;
 class imp_database extends _modelo_parent{
 
     public function __construct(PDO $link){
+        $this->valida_existe_entidad = false;
         $tabla = 'imp_database';
         $columnas = array($tabla=>false,'imp_server'=>$tabla);
         $campos_obligatorios[] = 'descripcion';
