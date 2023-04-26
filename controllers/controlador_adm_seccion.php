@@ -20,6 +20,9 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
     public string $link_imp_origen_alta_bd = '';
     public string $link_adm_campo_alta_bd = '';
 
+    public string $ths = '';
+    public array $keys_data = array();
+
     private adm_seccion_html $html_local;
 
     public function __construct(PDO $link, html $html = new html(), stdClass $paths_conf = new stdClass())
@@ -161,6 +164,18 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
             return $this->retorno_error(mensaje: 'Error al obtener imp_databases',data:  $imp_databases, header: $header,ws:  $ws);
         }
 
+        $campos_entidad = $modelo_sink->campos_view;
+
+        $ths = '<th>DataBase</th>';
+        $keys_data[] = 'imp_database_descripcion';
+        foreach ($campos_entidad as $campo=>$value){
+           $ths .="<th>$campo</th>";
+           $keys_data[] = $modelo_sink->tabla."_".$campo;
+        }
+        $this->ths = $ths;
+        $this->keys_data = $keys_data;
+
+
         foreach ($imp_databases as $imp_database){
             $link_destino = (new _conexion())->link_destino(imp_database_id: $imp_database['imp_database_id'],link:  $this->link);
             if(errores::$error){
@@ -185,13 +200,14 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
             $modelo_sink = $modelo_base->genera_modelo(modelo: $name_modelo,namespace_model: $namespace_model);
             $registros = $modelo_sink->registros();
             if(errores::$error){
-                $error =  $this->errores->error(mensaje: 'Error al obtener registros',data:  $registros);
+                $error =  $this->errores->error(mensaje: 'Error al obtener registros',data:  array($registros,$name_db));
                 print_r($error);
                 exit;
             }
             foreach ($registros as $registro){
                 $link_destino->beginTransaction();
-                $regenera = $modelo_sink->regenera(com_tmp_cte_dp_id: $registro['com_tmp_cte_dp_id']);
+
+                $regenera = $modelo_sink->regenera($registro[$modelo_sink->key_id]);
                 if(errores::$error){
                     $link_destino->rollBack();
                     $error =  $this->errores->error(mensaje: 'Error al regenerar',data:  $regenera);

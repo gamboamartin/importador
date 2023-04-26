@@ -22,40 +22,16 @@
                     <table class="table table-striped">
                         <thead>
                         <tr>
-                            <th>Database</th>
-                            <th>dp_estado_id</th>
-                            <th>dp_municipio_id</th>
-                            <th>dp_cp_id</th>
-                            <th>dp_colonia_id</th>
-                            <th>dp_calle_id</th>
-                            <th>dp_colonia_postal_id</th>
-                            <th>dp_calle_pertenece_id</th>
-                            <th>dp_pais</th>
-                            <th>dp_estado</th>
-                            <th>dp_municipio</th>
-                            <th>dp_cp</th>
-                            <th>dp_colonia</th>
-                            <th>dp_calle</th>
+                            <?php  echo $controlador->ths; ?>
                         </tr>
                         </thead>
                         <tbody>
                         <?php
-                        foreach ($controlador->registros as $com_tmp_cte_dp){ ?>
+                        foreach ($controlador->registros as $row){ ?>
                             <tr>
-                                <td><?php  echo $com_tmp_cte_dp['imp_database_descripcion'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_estado_id'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_municipio_id'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_cp_id'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_colonia_id'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_calle_id'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_colonia_postal_id'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_calle_pertenece_id'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_pais'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_estado'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_municipio'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_cp'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_colonia'] ?></td>
-                                <td><?php  echo $com_tmp_cte_dp['com_tmp_cte_dp_dp_calle'] ?></td>
+                                <?php foreach ($controlador->keys_data as $key){ ?>
+                                <td><?php  echo $row[$key] ?></td>
+                                <?php } ?>
                             </tr>
                             <?php
                         }
