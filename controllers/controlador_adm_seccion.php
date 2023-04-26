@@ -1,10 +1,15 @@
 <?php
 namespace gamboamartin\importador\controllers;
 
+use base\orm\estructuras;
+use base\orm\modelo;
+use base\orm\modelo_base;
 use gamboamartin\errores\errores;
 use gamboamartin\importador\html\adm_tipo_dato_html;
 use gamboamartin\importador\html\imp_database_html;
+use gamboamartin\importador\models\_conexion;
 use gamboamartin\importador\models\adm_seccion;
+use gamboamartin\importador\models\imp_database;
 use gamboamartin\template_1\html;
 use html\adm_seccion_html;
 use PDO;
@@ -130,6 +135,76 @@ class controlador_adm_seccion extends \gamboamartin\acl\controllers\controlador_
         }
 
         return $contenido_table;
+
+    }
+
+    public function sincroniza(bool $header = true, bool $ws = false){
+        $adm_seccion = $this->modelo->registro(registro_id: $this->registro_id);
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener asm_seccion',data:  $adm_seccion, header: $header,ws:  $ws);
+        }
+
+        $name_modelo = $adm_seccion['adm_seccion_descripcion'];
+        $namespace_model = $adm_seccion['adm_namespace_name'];
+        $namespace_model = str_replace('/', '\\', $namespace_model);
+        $namespace_model .= '\\models';
+
+        $modelo_sink = $this->modelo->genera_modelo(modelo: $name_modelo,namespace_model: $namespace_model);
+
+        if(!$modelo_sink->es_sincronizable){
+            return $this->retorno_error(
+                mensaje: 'Error al  el modelo no es sincronizable',data:  $modelo_sink, header: $header,ws:  $ws);
+        }
+
+        $imp_databases = (new imp_database(link: $this->link))->registros();
+        if(errores::$error){
+            return $this->retorno_error(mensaje: 'Error al obtener imp_databases',data:  $imp_databases, header: $header,ws:  $ws);
+        }
+
+        foreach ($imp_databases as $imp_database){
+            $link_destino = (new _conexion())->link_destino(imp_database_id: $imp_database['imp_database_id'],link:  $this->link);
+            if(errores::$error){
+                $error = $this->errores->error(mensaje: 'Error al conectar imp_database',data:  $link_destino);
+                print_r($error);
+                exit;
+            }
+            $name_db = $imp_database['imp_database_descripcion'];
+            $estructura = (new estructuras(link: $link_destino));
+            $existe_entidad = $estructura->existe_entidad(entidad: $name_modelo);
+            if(errores::$error){
+                $error =  $this->errores->error(mensaje: 'Error al obtener existe_entidad',data:  $existe_entidad);
+                print_r($error);
+                exit;
+            }
+            if(!$existe_entidad){
+                continue;
+            }
+
+            $modelo_base = new modelo_base(link: $link_destino);
+
+            $modelo_sink = $modelo_base->genera_modelo(modelo: $name_modelo,namespace_model: $namespace_model);
+            $registros = $modelo_sink->registros();
+            if(errores::$error){
+                $error =  $this->errores->error(mensaje: 'Error al obtener registros',data:  $registros);
+                print_r($error);
+                exit;
+            }
+            foreach ($registros as $registro){
+                $link_destino->beginTransaction();
+                $regenera = $modelo_sink->regenera(com_tmp_cte_dp_id: $registro['com_tmp_cte_dp_id']);
+                if(errores::$error){
+                    $link_destino->rollBack();
+                    $error =  $this->errores->error(mensaje: 'Error al regenerar',data:  $regenera);
+                    print_r($error);
+                    exit;
+                }
+                $link_destino->commit();
+                $registro['imp_database_descripcion'] = $name_db;
+                $this->registros[] = $registro;
+            }
+
+        }
+
 
     }
 }
