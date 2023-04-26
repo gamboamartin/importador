@@ -324,7 +324,6 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
             exit;
         }
 
-        //print_r($imp_database);exit;
         $name_db = $imp_database['imp_database_descripcion'];
 
         $estructura = (new estructuras(link: $link_destino));
@@ -335,9 +334,7 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
             print_r($error);
             exit;
         }
-
         if(!in_array('com_tmp_cte_dp', $entidades)){
-
             echo 'No aplica';
             exit;
         }
@@ -346,29 +343,25 @@ class controlador_imp_database extends _ctl_parent_sin_codigo {
         $com_tmp_cte_dp_modelo = (new com_tmp_cte_dp(link: $link_destino));
 
         $com_tmp_cte_dps = $com_tmp_cte_dp_modelo->registros();
-
-        foreach ($com_tmp_cte_dps as $com_tmp_cte_dp){
-            $regenera = $com_tmp_cte_dp_modelo->regenera(com_tmp_cte_dp_id: $com_tmp_cte_dp['com_tmp_cte_dp_id']);
-            if(errores::$error){
-
-                $error =  $this->errores->error(mensaje: 'Error al regenerar',data:  $regenera);
-                print_r($error);
-                exit;
-            }
-
-        }
-
         if(errores::$error){
-
             $error =  $this->errores->error(mensaje: 'Error al obtener temporales',data:  $com_tmp_cte_dps);
             print_r($error);
             exit;
         }
 
+        foreach ($com_tmp_cte_dps as $com_tmp_cte_dp){
+            $link_destino->beginTransaction();
+            $regenera = $com_tmp_cte_dp_modelo->regenera(com_tmp_cte_dp_id: $com_tmp_cte_dp['com_tmp_cte_dp_id']);
+            if(errores::$error){
+                $link_destino->rollBack();
+                $error =  $this->errores->error(mensaje: 'Error al regenerar',data:  $regenera);
+                print_r($error);
+                exit;
+            }
+            $link_destino->commit();
+        }
 
         $this->com_tmp_cte_dps = $com_tmp_cte_dps;
-
-
 
     }
 
