@@ -34,9 +34,12 @@ class _parents{
 
             $aplica_parents = true;
 
-            $existe_parent = $this->existe_parent(destino: $destino, model_parent: $model_parent, parent: $parent,row:  $row);
+            $existe_parent = $this->existe_parent(destino: $destino, model_parent: $model_parent,
+                parent: $parent, row:  $row);
             if(errores::$error){
-                return $this->error->error(mensaje: 'Error al verificar si existe ',data:  $existe_parent);
+                return $this->error->error(mensaje: 'Error al verificar si existe model_parent'.
+                    $model_parent.' destino '.$destino->tabla,
+                    data:  $existe_parent);
             }
             if(!$existe_parent){
                 break;
@@ -61,17 +64,18 @@ class _parents{
     {
         $parent_id = $this->parent_id(parent: $parent, row: $row);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener parent_id',data:  $parent_id);
+            return $this->error->error(mensaje: 'Error al obtener parent_id model_parent '.$model_parent,
+                data:  $parent_id);
         }
 
         $obj_parent = $this->obj_parent(destino: $destino, model_parent: $model_parent, parent: $parent);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al generar objeto',data:  $obj_parent);
+            return $this->error->error(mensaje: 'Error al generar objeto '.$model_parent,data:  $obj_parent);
         }
 
         $existe_parent = $obj_parent->existe_by_id(registro_id: $parent_id);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al verificar si existe ',data:  $existe_parent);
+            return $this->error->error(mensaje: 'Error al verificar si existe '.$model_parent,data:  $existe_parent);
         }
         return $existe_parent;
     }
@@ -108,9 +112,9 @@ class _parents{
     }
 
     /**
-     *
-     * @param array $parent
-     * @param array $row
+     * Obtiene el parent id
+     * @param array $parent Parent
+     * @param array $row Row
      * @return int|array
      */
     final public function parent_id(array $parent, array $row): int|array
@@ -118,16 +122,21 @@ class _parents{
         $keys = array('key_id');
         $valida = $this->valida->valida_existencia_keys(keys: $keys,registro:  $parent);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al validar parent',data:  $valida);
+            $data = new stdClass();
+            $data->parent = $parent;
+            $data->row = $row;
+            return $this->error->error(mensaje: 'Error al validar parent ',data:  $valida, params: (array)$data);
         }
-
 
         $key_id_parent = (string)$parent['key_id'];
 
         $keys = array($key_id_parent);
         $valida = $this->valida->valida_existencia_keys(keys: $keys,registro:  $row);
         if(errores::$error){
-            return $this->error->error(mensaje: 'Error al validar row',data:  $valida);
+            $data = new stdClass();
+            $data->parent = $parent;
+            $data->row = $row;
+            return $this->error->error(mensaje: 'Error al validar row',data:  $valida, params: (array)$data);
         }
 
         return $row[$key_id_parent];
