@@ -49,6 +49,21 @@ class imp_database extends _modelo_parent{
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al dar de alta', data: $r_alta_bd);
         }
+
+        $imp_origenes = (new imp_origen(link: $this->link))->registros_activos();
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener origenes', data: $imp_origenes);
+        }
+
+        foreach ($imp_origenes as $imp_origen){
+            $imp_destino_ins['imp_origen_id'] = $imp_origen['imp_origen_id'];
+            $imp_destino_ins['imp_database_id'] = $r_alta_bd->registro_id;
+            $r_alta_des = (new imp_destino(link: $this->link))->alta_registro(registro: $imp_destino_ins);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al dar de alta destino', data: $r_alta_des);
+            }
+        }
+
         return $r_alta_bd;
     }
 
