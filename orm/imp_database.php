@@ -111,7 +111,7 @@ class imp_database extends _modelo_parent{
         return $registro;
     }
 
-    private function destinos(int $imp_database_id){
+    public function destinos(int $imp_database_id){
 
         $filtro['imp_database.id'] = $imp_database_id;
         $r_imp_destinos = (new imp_destino(link: $this->link))->filtro_and(filtro: $filtro);
