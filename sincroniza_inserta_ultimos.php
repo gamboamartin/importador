@@ -37,7 +37,7 @@ if(errores::$error){
 
 foreach ($databases as $database){
 
-    $alta = $imp_database_modelo->inserta_ultimos(imp_database_id: $database['imp_database_id']);
+    $alta = $imp_database_modelo->inserta_ultimos(imp_database_id: $database['imp_database_id'], campo: 'fecha_alta');
     if(errores::$error){
         $error = (new errores())->error(mensaje: 'Error',data:  $alta);
         unlink($file_lock);

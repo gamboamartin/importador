@@ -122,14 +122,15 @@ class imp_database extends _modelo_parent{
 
     }
 
-    final public function inserta_ultimos(int $imp_database_id){
+    final public function inserta_ultimos(int $imp_database_id, string $campo = 'fecha_alta'){
         $r_altas_full = array();
         $imp_destinos = $this->destinos(imp_database_id: $imp_database_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener destinos',data:  $imp_destinos);
         }
         foreach ($imp_destinos as $imp_destino){
-            $r_alta_full = (new imp_destino(link: $this->link))->inserta_ultimos(imp_destino_id: $imp_destino['imp_destino_id']);
+            $r_alta_full = (new imp_destino(link: $this->link))->inserta_ultimos(
+                imp_destino_id: $imp_destino['imp_destino_id'], campo: $campo);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error al insertar destinos',data:  $r_alta_full);
             }

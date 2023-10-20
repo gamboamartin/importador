@@ -192,9 +192,9 @@ class imp_destino extends _modelo_parent{
 
 
 
-    public function inserta_ultimos(int $imp_destino_id){
+    public function inserta_ultimos(int $imp_destino_id, string $campo = 'fecha_alta'){
 
-        $ejecuciones = $this->_inserta_ultimos_campo(adm_accion_descripcion: __FUNCTION__,campo:  'fecha_alta',imp_destino_id:  $imp_destino_id);
+        $ejecuciones = $this->_inserta_ultimos_campo(adm_accion_descripcion: __FUNCTION__,campo:  $campo,imp_destino_id:  $imp_destino_id);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al insertar registros',data:  $ejecuciones);
         }
